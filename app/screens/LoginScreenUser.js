@@ -1,5 +1,6 @@
 import React from "react";
 import { Alert, Image, StyleSheet, Text, View } from "react-native";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import AppForm from "../components/forms/AppForm";
 import Screen from "../components/Screen";
 import colors from "../configs/colors";
@@ -38,7 +39,7 @@ function LoginScreenUser({ navigation }) {
 
     return (
         <Screen style={styles.container}>
-            <View style={styles.wrapper}>
+            <KeyboardAwareScrollView style={styles.wrapper}>
                 <View style={tailwind`py-4 rounded-2xl`}>
                     <Image style={styles.logo} source={require("../assets/logo.png")} />
                 </View>
@@ -75,7 +76,7 @@ function LoginScreenUser({ navigation }) {
                         Sign Up
                     </Text>
                 </Text>
-            </View>
+            </KeyboardAwareScrollView>
         </Screen>
     );
 }
@@ -83,10 +84,12 @@ function LoginScreenUser({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.white,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        flex: 1
     },
     wrapper: {
         paddingHorizontal: 20,
+        flex: 1
     },
     logo: {
         height: 160,

@@ -8,7 +8,7 @@ function JoinScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <View style={styles.image}>
-                <Image style={styles.logo} source={require("../assets/logo.png")} />
+                <Image style={styles.logo} source={require("../assets/logo-clear.png")} />
                 <View style={styles.content}>
                     <Text style={styles.title}>BUTLR: Your personal helper!</Text>
                     <Text style={styles.subTitle}>Get boring and tedious tasks done for you!.</Text>
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     logo: {
-        height: 200,
+        height: 400,
         resizeMode: "contain",
         alignSelf: "center",
         position: 'absolute',
