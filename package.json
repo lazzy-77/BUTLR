@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
+    "@react-navigation/bottom-tabs": "^6.4.0",
     "@react-navigation/native": "^6.0.13",
     "dotenv": "^16.0.3",
     "env": "^0.0.2",
@@ -29,6 +30,7 @@
     "react-native-largelist": "^3.1.0-rc.2",
     "react-native-safe-area-context": "^4.4.1",
     "react-native-spring-scrollview": "^4.0.0-dev-0",
+    "react-navigation": "^4.4.4",
     "react-virtualized-auto-sizer": "^1.0.7",
     "recyclerlistview": "^4.2.0",
     "tailwind-react-native-classnames": "^1.5.1",

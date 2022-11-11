@@ -9,5 +9,7 @@ export default {
     dark: '#0c0c0c',
     danger: '#E81A1A',
     title: '#0c0c0c',
-    brandTransparent: '#f8b71820'
+    brandTransparent: '#f8b71820',
+    activeTintColor: "#000",
+    inActiveTintColor: "#AEAEAE"
 }
