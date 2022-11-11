@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { Image, Text, TouchableOpacity, View, FlatList } from 'react-native';
+import { Image, Text, TouchableOpacity, View} from 'react-native';
 import tailwind from 'tailwind-react-native-classnames';
 import { Entypo } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
-const ServiceItemCard = ({ item }) => {
+const ServiceItemCard = ({ item, onPress }) => {
     const [loved, setLoved] = useState(false)
 
     return (
-        <View style={tailwind`mx-4 mb-4`}>
+        <TouchableOpacity style={tailwind`mx-4 mb-4`} onPress={onPress}>
             <Image
                 source={{ uri: item.image_url ? item.image_url : null}}
                 style={tailwind`w-full h-48 rounded-lg`}
@@ -29,7 +29,7 @@ const ServiceItemCard = ({ item }) => {
                     <Text style={tailwind`text-gray-600 text-xs`}>{item.rating}</Text>
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     )
 }
 
