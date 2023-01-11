@@ -9,7 +9,7 @@ function ImageInput({imageUri, onChangeImage}) {
     const requestPermissions = async () => {
         const { status  } = ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status === 'denied') {
-            alert('Sorry, we need camera roll permissions to make this work!');
+          alert('Sorry, we need camera roll permissions to make this work!');
         }
     }
 
@@ -19,15 +19,15 @@ function ImageInput({imageUri, onChangeImage}) {
 
     const selectImage = async () =>{
         try {
-            const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                quality: 0.5,
-                allowsEditing: true,
-                aspect: [4, 3],
-            })
-            if(!result.cancelled) onChangeImage(result.uri)
+          const result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              quality: 0.5,
+              allowsEditing: true,
+              aspect: [4, 3],
+          })
+          if(!result.cancelled) onChangeImage(result.uri)
         } catch (error) {
-            console.log("Error Reading an image", error)
+          console.log("Error Reading an image", error)
         }
     }
 
@@ -42,10 +42,10 @@ function ImageInput({imageUri, onChangeImage}) {
     return (
         <TouchableWithoutFeedback onPress={handlePress}>
             <View style={styles.container}>
-                {!imageUri ? (<MaterialCommunityIcons name="camera" color={colors.medium} size={35}/>) :
-                    (
-                        <Image style={styles.image} source={{uri: imageUri}}/>
-                    )}
+                {!imageUri ? (<MaterialCommunityIcons name="camera" color={colors.medium} size={35}/>) : 
+                (
+                    <Image style={styles.image} source={{uri: imageUri}}/>
+                )}
             </View>
         </TouchableWithoutFeedback>
     )

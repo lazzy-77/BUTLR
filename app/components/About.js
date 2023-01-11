@@ -4,7 +4,7 @@ import {View, StyleSheet} from 'react-native';
 const About = () => {
     return (
         <View>
-
+            
         </View>
     );
 }

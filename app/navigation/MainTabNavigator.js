@@ -10,7 +10,6 @@ import BrowseScreen from '../screens/BrowseScreen';
 import CartScreen from '../screens/CartScreen';
 import GroceryScreen from '../screens/GroceryScreen';
 import AccountScreen from '../screens/AccountScreen';
-import HomeNavigator from './HomeNavigator';
 
 const Tab = createBottomTabNavigator()
 
@@ -26,43 +25,41 @@ const MainTabNavigator = () => {
                     paddingTop: 10,
                     paddingBottom: 10,
                     height: 60,
-                    borderTopRightRadius: 30,
-                    borderTopLeftRadius: 30,
                 },
             }}
         >
-            <Tab.Screen name="Home" component={HomeNavigator}
-                        options={{
-                            tabBarIcon: ({ color, size }) => (
-                                <AntDesign name="home" color={color} size={size} />
-                            )
-                        }}
+            <Tab.Screen name="Home" component={HomeScreen}
+                options={{
+                    tabBarIcon: ({ color, size }) => (
+                        <AntDesign name="home" color={color} size={size} />
+                    )
+                }}
             />
             <Tab.Screen name="Browse" component={BrowseScreen}
-                        options={{
-                            tabBarIcon: ({ color, size }) => (
-                                <Ionicons name="md-search-sharp" color={color} size={size} />
-                            )
-                        }}
+                options={{
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="md-search-sharp" color={color} size={size} />
+                    )
+                }}
             />
             <Tab.Screen name="Cart" component={CartScreen}
-                        options={({ navigation }) => ({
-                            tabBarButton: () => <TabCartButton onPress={() => navigation.navigate('Cart')} />
-                        })}
+                options={({ navigation }) => ({
+                    tabBarButton: () => <TabCartButton onPress={() => navigation.navigate('Cart')} />
+                })}
             />
             <Tab.Screen name="Grocery" component={GroceryScreen}
-                        options={{
-                            tabBarIcon: ({ color, size }) => (
-                                <Feather name="shopping-bag" color={color} size={size} />
-                            )
-                        }}
+                options={{
+                    tabBarIcon: ({ color, size }) => (
+                        <Feather name="shopping-bag" color={color} size={size} />
+                    )
+                }}
             />
             <Tab.Screen name="Account" component={AccountScreen}
-                        options={{
-                            tabBarIcon: ({ color, size }) => (
-                                <Feather name="user" color={color} size={size} />
-                            )
-                        }}
+                options={{
+                    tabBarIcon: ({ color, size }) => (
+                        <Feather name="user" color={color} size={size} />
+                    )
+                }}
             />
         </Tab.Navigator>
     );

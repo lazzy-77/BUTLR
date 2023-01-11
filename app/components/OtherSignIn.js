@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { AntDesign } from '@expo/vector-icons';
 import colors from '../configs/colors';
 
-function OtherSignIn({ title, icon, onPress }) {
+function OtherSignin({ title, icon, onPress }) {
     return (
         <TouchableOpacity style={styles.container} onPress={onPress}>
             <AntDesign name={icon} size={24} color="black" />
@@ -29,4 +29,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default OtherSignIn
+export default OtherSignin
