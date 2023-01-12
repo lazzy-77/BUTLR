@@ -1,26 +1,26 @@
 import { Alert } from 'react-native'
 import { STRIPE_API_URL } from '../configs/apiEndpoints'
 
-export const getAllCartFoods = (items) => {
-    let allFoods = []
-    const foodsData = items.map(x => x.foods)
-    foodsData.map(food => {
-        food.map(x => {
-            allFoods = [...allFoods, x]
+export const getAllCartJobs = (items) => {
+    let allJobs = []
+    const jobsData = items.map(x => x.jobs)
+    jobsData.map(job => {
+        job.map(x => {
+            allJobs = [...allJobs, x]
         })
     })
-    return allFoods
+    return allJobs
 }
 
 export const getTotalCartItemPrice = (items) => {
-    let allFoods = []
-    const foodsData = items.map(x => x.foods)
-    foodsData.map(food => {
-        food.map(x => {
-            allFoods = [...allFoods, x]
+    let allJobs = []
+    const jobsData = items.map(x => x.jobs)
+    jobsData.map(job => {
+        job.map(x => {
+            allJobs = [...allJobs, x]
         })
     })
-    return allFoods.reduce((total, item) => total + item.price, 0).toFixed(1)
+    return allJobs.reduce((total, item) => total + item.price, 0).toFixed(1)
 }
 
 

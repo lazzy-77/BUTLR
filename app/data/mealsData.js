@@ -19,7 +19,7 @@ export const meals = [
     {title:"Salmon Avocado Salad",image:"https://www.themealdb.com/images/media/meals/1549542994.jpg",id:"529f60"},
     {title:"Salmon Prawn Risotto",image:"https://www.themealdb.com/images/media/meals/xxrxux1503070723.jpg",id:"52823"},
     {title:"Saltfish and Ackee",image:"https://www.themealdb.com/images/media/meals/vytypy1511883765.jpg",id:"52b936"},
-    {title:"Seafood fideuà",image:"https://www.themealdb.com/images/media/meals/wqqvyq1511179730.jpg",id:"528r36"},
+    {title:"Seajob fideuà",image:"https://www.themealdb.com/images/media/meals/wqqvyq1511179730.jpg",id:"528r36"},
     {title:"Shrimp Chow Fun",image:"https://www.themealdb.com/images/media/meals/1529445434.jpg",id:"529r53"},
     {title:"Sledz w Oleju (Polish Herrings)",image:"https://www.themealdb.com/images/media/meals/7ttta31593350374.jpg",id:"53b023"},
     {title:"Spring onion and prawn empanadas",image:"https://www.themealdb.com/images/media/meals/1c5oso1614347493.jpg",id:"5304m0"},

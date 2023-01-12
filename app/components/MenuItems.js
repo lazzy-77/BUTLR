@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Image } from 'react-native';
-import { foods } from '../data/foodsData'
+import { jobs } from '../data/jobsData'
 import tailwind from 'tailwind-react-native-classnames';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectCartItems, selectTotalPrice, updateBusket } from '../redux/slices/basketSlice';
+import { selectCartItems, selectTotalPrice, updateBasket } from '../redux/slices/basketSlice';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import colors from '../configs/colors';
 
@@ -14,47 +14,47 @@ const MenuItems = ({ resName, resImage }) => {
     const match = id => {
         const resIndex = cartItems.findIndex(item => item.resName === resName)
         if (resIndex >= 0) {
-            const menuIndex = cartItems[resIndex].foods.findIndex(item => item.id === id)
+            const menuIndex = cartItems[resIndex].jobs.findIndex(item => item.id === id)
             if (menuIndex >= 0) return true
             return false
         } return false
     }
 
     const handleAddRemove = (id) => {
-        const indexFromFood = foods.findIndex(x => x.id === id)
+        const indexFromJob = jobs.findIndex(x => x.id === id)
         const resIndex = cartItems.findIndex(item => item.resName === resName)
-        const foodItem = foods[indexFromFood]
+        const jobItem = jobs[indexFromJob]
 
         if (resIndex >= 0) {
-            const menuIndex = cartItems[resIndex].foods.findIndex(item => item.id === id)
+            const menuIndex = cartItems[resIndex].jobs.findIndex(item => item.id === id)
             if (menuIndex >= 0) {
                 let oldArrays = [...cartItems]
-                let oldfoods = [...oldArrays[resIndex].foods]
-                oldfoods.splice(menuIndex, 1)
+                let oldjobs = [...oldArrays[resIndex].jobs]
+                oldjobs.splice(menuIndex, 1)
                 oldArrays.splice(resIndex, 1)
-                let newArray = [...oldArrays, { foods: oldfoods, resName, resImage }]
-                dispatch(updateBusket(newArray))
+                let newArray = [...oldArrays, { jobs: oldjobs, resName, resImage }]
+                dispatch(updateBasket(newArray))
             } else {
                 let oldArrays = [...cartItems]
-                let newFoodArray = [...oldArrays[resIndex].foods, foodItem]
+                let newJobArray = [...oldArrays[resIndex].jobs, jobItem]
                 oldArrays.splice(resIndex, 1)
-                let updatedResArray = [...oldArrays, { foods: newFoodArray, resName, resImage }]
-                dispatch(updateBusket(updatedResArray))
+                let updatedResArray = [...oldArrays, { jobs: newJobArray, resName, resImage }]
+                dispatch(updateBasket(updatedResArray))
             }
         } else {
             let oldArrays = [...cartItems]
-            let newResFoodArray = [...oldArrays, {
-                foods: [{ ...foodItem }],
+            let newResJobArray = [...oldArrays, {
+                jobs: [{ ...jobItem }],
                 resName,
                 resImage
             }]
-            dispatch(updateBusket(newResFoodArray))
+            dispatch(updateBasket(newResJobArray))
         }
     }
 
     return (
         <View style={tailwind`mt-5 mb-12`}>
-            {foods?.map(({ title, description, image, price, id }, index) => (
+            {jobs?.map(({ title, description, image, price, id }, index) => (
                 <View style={tailwind`mb-3 flex-row justify-between items-center pb-3 border-b border-gray-100`} key={index} >
                     <View style={tailwind`flex-1 pr-3 flex-row items-center`}>
                         {match(id) ? (

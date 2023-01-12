@@ -10,7 +10,7 @@ import AppHead from '../components/AppHead';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/core';
 import { selectUser } from '../redux/slices/authSlice';
-import { selectCartItems, updateBusket } from '../redux/slices/basketSlice';
+import { selectCartItems, updateBasket } from '../redux/slices/basketSlice';
 import { db, timestamp } from '../configs/firebase';
 
 const CheckoutScreen = () => {
@@ -130,7 +130,7 @@ const CheckoutScreen = () => {
       .then(() => {
         setTimeout(() => {
           setLoadingOrder(false);
-          dispatch(updateBusket([]))
+          dispatch(updateBasket([]))
           navigation.navigate("SuccessScreen");
         }, 1500)
       })

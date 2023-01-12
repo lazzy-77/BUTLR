@@ -1,4 +1,4 @@
-export const foods = [
+export const jobs = [
     {
         id: 'KKD1',
         title: "Lasagna",

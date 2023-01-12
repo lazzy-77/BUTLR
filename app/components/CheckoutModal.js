@@ -24,7 +24,7 @@ const CheckoutModal = ({ setModalVisible }) => {
                 <Text style={tailwind`text-black text-center text-xl font-bold mb-5`}>Checkout details</Text>
                 <View style={tailwind`mb-5`}>
                     {allCartItems?.map(item => (
-                        <OrderItem key={item.resName} name={item.resName} value={`$${item?.foods.reduce((total, item) => total + item.price, 0).toFixed(1)} • (${item?.foods?.length})`} />
+                        <OrderItem key={item.resName} name={item.resName} value={`$${item?.jobs.reduce((total, item) => total + item.price, 0).toFixed(1)} • (${item?.jobs?.length})`} />
                     ))}
                     <OrderItem name="Total price" value={`$${totalPrice}`} total />
                 </View>
