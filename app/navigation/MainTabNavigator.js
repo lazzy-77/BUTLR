@@ -35,25 +35,27 @@ const MainTabNavigator = () => {
                     )
                 }}
             />
-            <Tab.Screen name="Browse" component={BrowseScreen}
-                options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="md-search-sharp" color={color} size={size} />
-                    )
-                }}
-            />
+            {/*TODO*/}
+            {/*<Tab.Screen name="Browse" component={BrowseScreen}*/}
+            {/*    options={{*/}
+            {/*        tabBarIcon: ({ color, size }) => (*/}
+            {/*            <Ionicons name="md-search-sharp" color={color} size={size} />*/}
+            {/*        )*/}
+            {/*    }}*/}
+            {/*/>*/}
             <Tab.Screen name="Cart" component={CartScreen}
                 options={({ navigation }) => ({
                     tabBarButton: () => <TabCartButton onPress={() => navigation.navigate('Cart')} />
                 })}
             />
-            <Tab.Screen name="Grocery" component={GroceryScreen}
-                options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <Feather name="shopping-bag" color={color} size={size} />
-                    )
-                }}
-            />
+            {/*TODO*/}
+            {/*<Tab.Screen name="Grocery" component={GroceryScreen}*/}
+            {/*    options={{*/}
+            {/*        tabBarIcon: ({ color, size }) => (*/}
+            {/*            <Feather name="shopping-bag" color={color} size={size} />*/}
+            {/*        )*/}
+            {/*    }}*/}
+            {/*/>*/}
             <Tab.Screen name="Account" component={AccountScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => (

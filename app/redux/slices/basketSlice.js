@@ -18,8 +18,8 @@ const authSlice = createSlice({
 export const { updateBasket } = authSlice.actions
 
 export const selectCartItems = state => state.basket.items
-export const selectTotalPrice = (state) => getTotalCartItemPrice(state.basket.items)
-export const selectTotalItems = (state) => getAllCartJobs(state.basket.items)
+export const selectTotalPrice = state => getTotalCartItemPrice(state.basket.items)
+export const selectTotalItems = state => getAllCartJobs(state.basket.items);
 
 
 export default authSlice.reducer

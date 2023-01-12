@@ -14,6 +14,7 @@ export const getAllCartJobs = (items) => {
 
 export const getTotalCartItemPrice = (items) => {
     let allJobs = []
+
     const jobsData = items.map(x => x.jobs)
     jobsData.map(job => {
         job.map(x => {

@@ -6,8 +6,8 @@ const HeaderTabs = ({ activeTab, setActiveTab }) => {
 
     return (
         <View style={tailwind`flex-row justify-center mt-3`}>
-            <HeaderButton text="Delivery" active={activeTab === "Delivery"} onPress={() => setActiveTab('Delivery')} />
-            <HeaderButton text="Pickup" active={activeTab === "Pickup"} onPress={() => setActiveTab('Pickup')} />
+            <HeaderButton text="Yelp" active={activeTab === "Yelp"} onPress={() => setActiveTab('Yelp')} />
+            <HeaderButton text="BUTLRs" active={activeTab === "BUTLRs"} onPress={() => setActiveTab('BUTLRs')} />
         </View>
     );
 }
