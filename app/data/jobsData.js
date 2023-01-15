@@ -1,43 +1,59 @@
 export const jobs = [
     {
         id: 'KKD1',
-        title: "Lasagna",
-        description: "With butter lettuce, tomato and sauce bechamel",
+        title: "2kg Clothes Iron",
+        description: "We will Iron 2kg worth of clothes",
         price: 13.5,
-        image: "https://www.modernhoney.com/wp-content/uploads/2019/08/Classic-Lasagna-14-scaled.jpg",
+        image: "https://images.unsplash.com/photo-1561053720-76cd73ff22c3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8aXJvbmluZ3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60",
     },
     {
         id: 'KKD2',
-        title: "Tandoori Chicken",
+        title: "Laundry",
         description:
-            "Amazing Indian dish with tenderloin chicken off the sizzles 🔥",
+            "We will wash 5kg of clothes",
         price: 19.20,
-        image: "https://i.ytimg.com/vi/BKxGodX9NGg/maxresdefault.jpg",
+        image: "https://images.unsplash.com/photo-1582735689369-4fe89db7114c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80",
     },
     {
         id: 'KKD3',
-        title: "Chilaquiles",
+        title: "1 Room Deep clean",
         description:
-            "Chilaquiles with cheese and sauce. A delicious mexican dish 🇲🇽",
+            "We will deep clean 1 room",
         price: 15.3,
         image:
-            "https://i2.wp.com/chilipeppermadness.com/wp-content/uploads/2020/11/Chilaquales-Recipe-Chilaquiles-Rojos-1.jpg",
+            "https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cm9vbSUyMGNsZWFuaW5nfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
     },
     {
         id: 'KKD4',
-        title: "Chicken Caesar Salad",
+        title: "Complete your groceries",
         description:
-            "One can never go wrong with a chicken caesar salad. Healthy option with greens and proteins!",
+            "We will do your groceries on a per hour basis",
         price: 21.5,
         image:
-            "https://images.themodernproper.com/billowy-turkey/production/posts/2019/Easy-italian-salad-recipe-10.jpg?w=1200&h=1200&q=82&fm=jpg&fit=crop&fp-x=0.5&fp-y=0.5&dm=1614096227&s=c0f63a30cef3334d97f9ecad14be51da",
+            "https://images.unsplash.com/photo-1588964895597-cfccd6e2dbf9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8Z3JvY2VyaWVzfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
     },
     {
         id: 'KKD5',
-        title: "Lasagna",
-        description: "With butter lettuce, tomato and sauce bechamel",
+        title: "Oil Change",
+        description: "We will change your oil and change your oil filter",
         price: 16.5,
         image:
-            "https://thestayathomechef.com/wp-content/uploads/2017/08/Most-Amazing-Lasagna-2-e1574792735811.jpg",
+            "https://images.unsplash.com/photo-1635437536607-b8572f443763?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8b2lsJTIwY2hhbmdlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    },
+    {
+        id: 'KKD5',
+        title: "Clogged Toilet repair",
+        description: "We will unclog one toilet",
+        price: 16.5,
+        image:
+            "https://images.unsplash.com/photo-1590690810009-2f912b48b382?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fGNsb2dnZWQlMjB0b2lsZXR8ZW58MHx8MHx8&auto=format&fit=crop&w=800&q=60",
+    },
+    {
+        id: 'KKD5',
+        title: "Fix faulty electricals",
+        description: "Will fix and diagnose faulty electricals",
+        price: 16.5,
+        image:
+            "https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8ZWxlY3RyaWNpdHklMjBtZXRlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60",
     },
 ];

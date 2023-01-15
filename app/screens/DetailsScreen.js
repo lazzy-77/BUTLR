@@ -6,11 +6,17 @@ import { Ionicons } from '@expo/vector-icons'
 import tailwind from 'tailwind-react-native-classnames';
 import { Foundation } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
-import ServiceMap from '../components/ServiceMap'
+import RestaurantMap from '../components/ServiceMap'
+import MenuItems from '../components/MenuItems'
+import ViewCart from '../components/ViewCart';
+import { selectTotalItems, selectTotalPrice } from '../redux/slices/basketSlice';
+import { useSelector } from 'react-redux';
 
 const DetailsScreen = ({ route, navigation }) => {
     const [mapActive, setMapActive] = useState(false)
     const { categories, coordinates, image_url, name, price, rating, review_count } = route?.params?.item
+    const totalPrice = useSelector(selectTotalPrice)
+    const getAllItems = useSelector(selectTotalItems)
 
     return (
         <View style={styles.container}>
@@ -19,7 +25,7 @@ const DetailsScreen = ({ route, navigation }) => {
             </TouchableOpacity>
             <View style={styles.mapImageWrapper}>
                 {mapActive ? (
-                    <ServiceMap coordinates={coordinates} title={name} />
+                    <RestaurantMap coordinates={coordinates} title={name} />
                 ) : (
                     <Image source={{ uri: image_url }} style={styles.image} />
                 )}
@@ -30,7 +36,7 @@ const DetailsScreen = ({ route, navigation }) => {
                     <View style={styles.header}>
                         <Text style={styles.title}>{name}</Text>
                         <TouchableOpacity onPress={() => setMapActive(e => !e)}>
-                            <Entypo name="location" size={24} color="black" />
+                            <Entypo name="location" size={24} color={`${mapActive ? colors.primary : '#000'}`} />
                         </TouchableOpacity>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -49,14 +55,10 @@ const DetailsScreen = ({ route, navigation }) => {
                             </View>
                         </View>
                     </View>
-                    <View style={tailwind`mt-3`}>
-                        <Text style={[tailwind`text-gray-800 font-bold border-b w-1/3 mb-2 pb-1`, { borderBottomColor: colors.primary, fontSize: 17 }]}>Categories</Text>
-                        {categories.map(({ title }, index) => (
-                            <Text key={index} style={tailwind`text-xs text-gray-700`}><Text style={{ color: colors.primary }}>•</Text> {title}</Text>
-                        ))}
-                    </View>
+                    <MenuItems resName={name} resImage={image_url} />
                 </View>
             </ScrollView>
+            <ViewCart total={totalPrice} count={getAllItems.length} />
         </View>
     );
 }
