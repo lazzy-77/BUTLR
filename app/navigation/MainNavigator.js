@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 const Stack = createStackNavigator();
-import HomeScreen from '../screens/HomeScreen'
+import RequestsScreen from '../screens/RequestsScreen'
 
 export default function MainNavigator() {
 
@@ -11,7 +11,7 @@ export default function MainNavigator() {
                 headerShown: false
             }}
         >
-            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Requests" component={RequestsScreen} />
         </Stack.Navigator>
     )
 }

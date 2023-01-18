@@ -12,8 +12,8 @@ export const localServices = [
             latitude: 37.759958,
             longitude: -122.435089
         },
-        review_count: 400
-
+        review_count: 400,
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget urna velit. Sed ut metus augue. Praesent commodo fermentum risus, eget euismod odio aliquet in. Fusce tincidunt ex euismod, fermentum ligula a, bibendum augue. Aliquam erat volutpat. Sed auctor risus euismod urna aliquet, id euismod nibh placerat. Sed luctus, velit vel tempor viverra, velit neque malesuada velit, eget malesuada nibh velit vel risus. Nulla facilisi. Sed interdum, elit non faucibus convallis, nibh enim ornare augue, at rutrum sapien nunc in orci. Sed euismod, est eget auctor elementum, magna magna rutrum orci, non rutrum nibh orci non ipsum. Nam auctor euismod risus, id malesuada risus bibendum non."
     },
     {
         name: "Northern Ireland Laundry Service",
@@ -28,7 +28,8 @@ export const localServices = [
             latitude: 37.759958,
             longitude: -122.435089
         },
-        review_count: 346
+        review_count: 346,
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget urna velit. Sed ut metus augue. Praesent commodo fermentum risus, eget euismod odio aliquet in. Fusce tincidunt ex euismod, fermentum ligula a, bibendum augue. Aliquam erat volutpat. Sed auctor risus euismod urna aliquet, id euismod nibh placerat. Sed luctus, velit vel tempor viverra, velit neque malesuada velit, eget malesuada nibh velit vel risus. Nulla facilisi. Sed interdum, elit non faucibus convallis, nibh enim ornare augue, at rutrum sapien nunc in orci. Sed euismod, est eget auctor elementum, magna magna rutrum orci, non rutrum nibh orci non ipsum. Nam auctor euismod risus, id malesuada risus bibendum non."
     },
     {
         name: "R&J's Cleaning Service",
@@ -42,7 +43,8 @@ export const localServices = [
             latitude: 37.759958,
             longitude: -122.435089
         },
-        review_count: 7680
+        review_count: 7680,
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget urna velit. Sed ut metus augue. Praesent commodo fermentum risus, eget euismod odio aliquet in. Fusce tincidunt ex euismod, fermentum ligula a, bibendum augue. Aliquam erat volutpat. Sed auctor risus euismod urna aliquet, id euismod nibh placerat. Sed luctus, velit vel tempor viverra, velit neque malesuada velit, eget malesuada nibh velit vel risus. Nulla facilisi. Sed interdum, elit non faucibus convallis, nibh enim ornare augue, at rutrum sapien nunc in orci. Sed euismod, est eget auctor elementum, magna magna rutrum orci, non rutrum nibh orci non ipsum. Nam auctor euismod risus, id malesuada risus bibendum non."
     },
     {
         name: "Grocercies4u",
@@ -56,7 +58,8 @@ export const localServices = [
             latitude: 37.759958,
             longitude: -122.435089
         },
-        review_count: 8796
+        review_count: 8796,
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget urna velit. Sed ut metus augue. Praesent commodo fermentum risus, eget euismod odio aliquet in. Fusce tincidunt ex euismod, fermentum ligula a, bibendum augue. Aliquam erat volutpat. Sed auctor risus euismod urna aliquet, id euismod nibh placerat. Sed luctus, velit vel tempor viverra, velit neque malesuada velit, eget malesuada nibh velit vel risus. Nulla facilisi. Sed interdum, elit non faucibus convallis, nibh enim ornare augue, at rutrum sapien nunc in orci. Sed euismod, est eget auctor elementum, magna magna rutrum orci, non rutrum nibh orci non ipsum. Nam auctor euismod risus, id malesuada risus bibendum non."
     },
     {
         name: "Lightning Car Repair",
@@ -70,7 +73,8 @@ export const localServices = [
             latitude: 37.759958,
             longitude: -122.435089
         },
-        review_count: 8796
+        review_count: 8796,
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget urna velit. Sed ut metus augue. Praesent commodo fermentum risus, eget euismod odio aliquet in. Fusce tincidunt ex euismod, fermentum ligula a, bibendum augue. Aliquam erat volutpat. Sed auctor risus euismod urna aliquet, id euismod nibh placerat. Sed luctus, velit vel tempor viverra, velit neque malesuada velit, eget malesuada nibh velit vel risus. Nulla facilisi. Sed interdum, elit non faucibus convallis, nibh enim ornare augue, at rutrum sapien nunc in orci. Sed euismod, est eget auctor elementum, magna magna rutrum orci, non rutrum nibh orci non ipsum. Nam auctor euismod risus, id malesuada risus bibendum non."
     },
     {
         name: "iPlumbers",
@@ -84,7 +88,8 @@ export const localServices = [
             latitude: 37.759958,
             longitude: -122.435089
         },
-        review_count: 8796
+        review_count: 8796,
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget urna velit. Sed ut metus augue. Praesent commodo fermentum risus, eget euismod odio aliquet in. Fusce tincidunt ex euismod, fermentum ligula a, bibendum augue. Aliquam erat volutpat. Sed auctor risus euismod urna aliquet, id euismod nibh placerat. Sed luctus, velit vel tempor viverra, velit neque malesuada velit, eget malesuada nibh velit vel risus. Nulla facilisi. Sed interdum, elit non faucibus convallis, nibh enim ornare augue, at rutrum sapien nunc in orci. Sed euismod, est eget auctor elementum, magna magna rutrum orci, non rutrum nibh orci non ipsum. Nam auctor euismod risus, id malesuada risus bibendum non."
     },
     {
         name: "Desmond's Electrical Services",
@@ -98,6 +103,7 @@ export const localServices = [
             latitude: 37.759958,
             longitude: -122.435089
         },
-        review_count: 8796
+        review_count: 8796,
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget urna velit. Sed ut metus augue. Praesent commodo fermentum risus, eget euismod odio aliquet in. Fusce tincidunt ex euismod, fermentum ligula a, bibendum augue. Aliquam erat volutpat. Sed auctor risus euismod urna aliquet, id euismod nibh placerat. Sed luctus, velit vel tempor viverra, velit neque malesuada velit, eget malesuada nibh velit vel risus. Nulla facilisi. Sed interdum, elit non faucibus convallis, nibh enim ornare augue, at rutrum sapien nunc in orci. Sed euismod, est eget auctor elementum, magna magna rutrum orci, non rutrum nibh orci non ipsum. Nam auctor euismod risus, id malesuada risus bibendum non."
     },
 ];

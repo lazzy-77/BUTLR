@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Feather } from '@expo/vector-icons';
 import colors from '../configs/colors';
-import HomeScreen from '../screens/HomeScreen'
+import RequestsScreen from '../screens/RequestsScreen'
 import TabCartButton from '../components/TabCartButton'
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
@@ -28,21 +28,13 @@ const MainTabNavigator = () => {
                 },
             }}
         >
-            <Tab.Screen name="Home" component={HomeScreen}
+            <Tab.Screen name="Requests" component={RequestsScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => (
-                        <AntDesign name="home" color={color} size={size} />
+                        <AntDesign name="form" color={color} size={size} />
                     )
                 }}
             />
-            {/*TODO*/}
-            {/*<Tab.Screen name="Browse" component={BrowseScreen}*/}
-            {/*    options={{*/}
-            {/*        tabBarIcon: ({ color, size }) => (*/}
-            {/*            <Ionicons name="md-search-sharp" color={color} size={size} />*/}
-            {/*        )*/}
-            {/*    }}*/}
-            {/*/>*/}
             <Tab.Screen name="Cart" component={CartScreen}
                 options={({ navigation }) => ({
                     tabBarButton: () => <TabCartButton onPress={() => navigation.navigate('Cart')} />
