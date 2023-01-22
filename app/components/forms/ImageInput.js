@@ -7,9 +7,12 @@ import colors from '../../configs/colors'
 function ImageInput({imageUri, onChangeImage}) {
 
     const requestPermissions = async () => {
-        const { status  } = ImagePicker.requestMediaLibraryPermissionsAsync();
+        const { status } = await Promise.all([
+            ImagePicker.requestMediaLibraryPermissionsAsync(),
+            ImagePicker.requestCameraPermissionsAsync()
+        ])
         if (status === 'denied') {
-          alert('Sorry, we need camera roll permissions to make this work!');
+            alert('Sorry, we need camera roll and camera permissions to make this work!');
         }
     }
 
@@ -20,7 +23,7 @@ function ImageInput({imageUri, onChangeImage}) {
     const selectImage = async () =>{
         try {
           const result = await ImagePicker.launchImageLibraryAsync({
-              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              mediaTypes: ImagePicker.MediaTypeOptions.All,
               quality: 0.5,
               allowsEditing: true,
               aspect: [4, 3],
@@ -31,13 +34,42 @@ function ImageInput({imageUri, onChangeImage}) {
         }
     }
 
+    const takePicture = async () => {
+        try {
+            const result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                quality: 0.5,
+                allowsEditing: true,
+                aspect: [4, 3],
+            });
+            if (!result.cancelled) onChangeImage(result.uri);
+        } catch (error) {
+            console.log("Error taking a picture", error);
+        }
+    };
+
+
     const handlePress = () => {
-        if(!imageUri) selectImage();
-        else Alert.alert('Delete', 'Are you sure you want to delete this image?', [
-            {text: 'yes', onPress: () => onChangeImage(null)},
-            {text: 'no'}
-        ])
+        if(!imageUri) {
+            Alert.alert(
+                'Select Image',
+                'Where would you like to select the image from?',
+                [
+                    { text: 'Take Picture', onPress: takePicture },
+                    { text: 'Gallery', onPress: selectImage },
+                    { text: 'Cancel', style: 'cancel' },
+                ],
+                { cancelable: true },
+            );
+        }
+        else {
+            Alert.alert('Delete', 'Are you sure you want to delete this image?', [
+                {text: 'yes', onPress: () => onChangeImage(null)},
+                {text: 'no'}
+            ])
+        }
     }
+
 
     return (
         <TouchableWithoutFeedback onPress={handlePress}>
