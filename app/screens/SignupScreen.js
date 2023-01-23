@@ -7,7 +7,7 @@ import colors from "../configs/colors";
 import * as yup from "yup";
 import AppFormFields from "../components/forms/AppFormFields";
 import AppSubmitButton from "../components/forms/AppSubmitButton";
-import {auth} from "../configs/firebase";
+import { auth, createUserWithEmailAndPassword } from "../configs/firebase";
 import tailwind from 'tailwind-react-native-classnames';
 
 const loginValidationSchema = yup.object().shape({
@@ -29,8 +29,7 @@ const loginValidationSchema = yup.object().shape({
 function SignupScreen({navigation}) {
 
     const signUpUser = ({name, email, password}) => {
-        auth
-            .createUserWithEmailAndPassword(email, password)
+        createUserWithEmailAndPassword(auth, email, password)
             .then((result) => {
                 result.user
                     .updateProfile({displayName: name})

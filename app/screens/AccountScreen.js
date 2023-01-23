@@ -7,7 +7,8 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/slices/authSlice'
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-import { auth } from '../configs/firebase'
+import { auth, signOut } from '../configs/firebase';
+import ImageInput from "../components/forms/ImageInput";
 
 const AccountScreen = () => {
     const user = useSelector(selectUser)
@@ -22,6 +23,7 @@ const AccountScreen = () => {
                 <Text style={tailwind`mt-4 text-3xl font-bold`}>{user?.name}</Text>
                 <Text style={tailwind`text-lg text-indigo-900`}>{user?.email}</Text>
             </View>
+            <ImageInput/>
             <View style={tailwind`mx-4 border-t border-t-2 mt-5 border-gray-100`}>
                 <Text style={tailwind`text-gray-800 mt-2 text-lg mb-2`}>Saved places</Text>
                 <SavedPlaces
@@ -37,7 +39,7 @@ const AccountScreen = () => {
             </View>
             <View style={tailwind`mx-4 border-t border-t-2 mt-5 border-gray-100`}>
                 <Text style={tailwind`text-gray-800 mt-2 text-lg`}>Other options</Text>
-                <TouchableOpacity onPress={() => auth.signOut()}>
+                <TouchableOpacity onPress={() => signOut(auth)}>
                     <Text style={tailwind`text-green-900 mt-2`}>Sign out</Text>
                 </TouchableOpacity>
             </View>
