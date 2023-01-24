@@ -4,7 +4,6 @@ import tailwind from 'tailwind-react-native-classnames';
 import {GOOGLE_MAP_APIKEY} from "@env"
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
 import {Ionicons, FontAwesome5} from '@expo/vector-icons';
-import {MaterialCommunityIcons} from '@expo/vector-icons';
 
 const SearchBar = ({setCity, city, handleUseMyLocation}) => {
 
