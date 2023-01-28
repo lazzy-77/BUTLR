@@ -13,7 +13,10 @@ const SearchBar = ({setCity, city, handleUseMyLocation}) => {
                 placeholder={city || "Search"}
                 nearbyPlacesAPI="GooglePlacesSearch"
                 debounce={400}
-                onPress={data => setCity(data.structured_formatting.main_text)}
+                onPress={(data, details= null) => {
+                    setCity(data.structured_formatting.main_text);
+                    console.log(data, "\n", "\n", "\n", details.geometry.location);
+                }}
                 minLength={2}
                 fetchDetails={true}
                 returnKeyType={"search"}

@@ -7,7 +7,7 @@ import colors from "../configs/colors";
 import * as yup from "yup";
 import AppFormFields from "../components/forms/AppFormFields";
 import AppSubmitButton from "../components/forms/AppSubmitButton";
-import { auth, createUserWithEmailAndPassword } from "../configs/firebase";
+import { auth, createUserWithEmailAndPassword, updateProfile } from "../configs/firebase";
 import tailwind from 'tailwind-react-native-classnames';
 
 const loginValidationSchema = yup.object().shape({
@@ -31,14 +31,11 @@ function SignupScreen({navigation}) {
     const signUpUser = ({name, email, password}) => {
         createUserWithEmailAndPassword(auth, email, password)
             .then((result) => {
-                result.user
-                    .updateProfile({displayName: name})
-                    .then(() => {
-                        // User account created & signed in!
-                    })
-                    .catch((err) => {
-                        Alert.alert("Error", err.message)
-                    });
+                updateProfile(result.user, {displayName: name}).then(() => {
+                    //User Created
+                }).catch((error) => {
+                    Alert.alert("ERROR: ", error.message);
+                })
             })
             .catch((error) => {
                 if (error.code === "auth/email-already-in-use") {

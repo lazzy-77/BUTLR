@@ -1,30 +1,40 @@
-import React, { useState } from 'react'
-import { useFormikContext } from 'formik'
-import { AntDesign } from '@expo/vector-icons';
+import React, {useState} from 'react'
+import {useFormikContext} from 'formik'
+import {AntDesign} from '@expo/vector-icons';
 import AppErrorMessage from './AppErrorMessage'
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native'
 import colors from '../../configs/colors'
 
-export default function AppFormFields({name, password = false, ...otherProps}) {
+export default function AppFormFields({
+                                          name,
+                                          password = false,
+                                          title,
+                                          style,
+                                          ...otherProps
+                                      }) {
     const [showPassword, setShowPassword] = useState(password)
-    const {setFieldTouched, handleChange, errors, touched, values } = useFormikContext()
+    const {setFieldTouched, handleChange, errors, touched, values} = useFormikContext()
 
     return (
         <View style={styles.container}>
+            {title && <Text style={styles.title}>{title}</Text>}
             <TextInput
                 onBlur={() => setFieldTouched(name)}
                 onChangeText={handleChange(name)}
                 {...otherProps}
-                style={[styles.input, (touched[name] && errors[name]) && { borderColor: colors.danger }]}
+                style={[
+                    styles.input,
+                    (touched[name] && errors[name]) && {borderColor: colors.danger},
+                ]}
                 secureTextEntry={showPassword}
                 value={values[name]}
             />
             {password && (
                 <TouchableOpacity style={styles.icon} onPress={() => setShowPassword(!showPassword)}>
                     {showPassword ? (
-                        <AntDesign name="eye" size={24} color={colors.black} />
+                        <AntDesign name="eye" size={24} color={colors.black}/>
                     ) : (
-                        <AntDesign name="eyeo" size={24} color={colors.black} />
+                        <AntDesign name="eyeo" size={24} color={colors.black}/>
                     )}
                 </TouchableOpacity>
             )}
@@ -36,6 +46,7 @@ export default function AppFormFields({name, password = false, ...otherProps}) {
 const styles = StyleSheet.create({
     container: {
         position: 'relative',
+        marginBottom: 20
     },
     input: {
         borderColor: colors.medium,

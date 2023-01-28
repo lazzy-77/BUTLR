@@ -14,7 +14,7 @@ import { useSelector } from 'react-redux';
 
 const DetailsScreen = ({ route, navigation }) => {
     const [mapActive, setMapActive] = useState(false)
-    const { categories, coordinates, image_url, name, price, rating, review_count } = route?.params?.item
+    const { coordinates, image_url, name, price, rating, review_count } = route?.params?.item
     const totalPrice = useSelector(selectTotalPrice)
     const getAllItems = useSelector(selectTotalItems)
 

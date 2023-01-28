@@ -17,7 +17,9 @@ function ImageInput({imageUri, onChangeImage}) {
     }
 
     useEffect(() => {
-        requestPermissions()
+        requestPermissions().then(r => {
+            //Permission granted
+        })
     }, [])
 
     const selectImage = async () =>{
@@ -25,10 +27,9 @@ function ImageInput({imageUri, onChangeImage}) {
           const result = await ImagePicker.launchImageLibraryAsync({
               mediaTypes: ImagePicker.MediaTypeOptions.All,
               quality: 0.5,
-              allowsEditing: true,
-              aspect: [4, 3],
+              allowsMultipleSelection: true,
           })
-          if(!result.cancelled) onChangeImage(result.uri)
+          if(!result.canceled) onChangeImage(result.assets[0].uri)
         } catch (error) {
           console.log("Error Reading an image", error)
         }
@@ -39,10 +40,8 @@ function ImageInput({imageUri, onChangeImage}) {
             const result = await ImagePicker.launchCameraAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.All,
                 quality: 0.5,
-                allowsEditing: true,
-                aspect: [4, 3],
             });
-            if (!result.cancelled) onChangeImage(result.uri);
+            if (!result.canceled) onChangeImage(result.assets[0].uri);
         } catch (error) {
             console.log("Error taking a picture", error);
         }
@@ -74,7 +73,7 @@ function ImageInput({imageUri, onChangeImage}) {
     return (
         <TouchableWithoutFeedback onPress={handlePress}>
             <View style={styles.container}>
-                {!imageUri ? (<MaterialCommunityIcons name="camera" color={colors.medium} size={35}/>) : 
+                {!imageUri ? (<MaterialCommunityIcons name="camera" color={colors.medium} size={35}/>) :
                 (
                     <Image style={styles.image} source={{uri: imageUri}}/>
                 )}

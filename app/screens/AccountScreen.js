@@ -9,6 +9,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { auth, signOut } from '../configs/firebase';
 import ImageInput from "../components/forms/ImageInput";
+import CreateDummyData from "../data/createDummyData";
 
 const AccountScreen = () => {
     const user = useSelector(selectUser)
@@ -24,6 +25,7 @@ const AccountScreen = () => {
                 <Text style={tailwind`text-lg text-indigo-900`}>{user?.email}</Text>
             </View>
             <ImageInput/>
+            <CreateDummyData/>
             <View style={tailwind`mx-4 border-t border-t-2 mt-5 border-gray-100`}>
                 <Text style={tailwind`text-gray-800 mt-2 text-lg mb-2`}>Saved places</Text>
                 <SavedPlaces

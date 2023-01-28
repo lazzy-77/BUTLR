@@ -6,10 +6,10 @@ import Categories from '../components/Categories'
 import SearchBar from '../components/SearchBar'
 import ServiceItem from "../components/ServiceItem";
 import tailwind from 'tailwind-react-native-classnames';
-import {GOOGLE_MAP_APIKEY} from "@env"
 import {localServices} from '../data/localServices';
 import colors from '../configs/colors'
-import * as Location from 'expo-location';
+import {GOOGLE_MAP_APIKEY} from "@env"
+import { requestPermission,  getUserLocation} from '../utils/location';
 
 const RequestsScreen = () => {
     const [serviceData, setServiceData] = useState(localServices);
@@ -19,17 +19,25 @@ const RequestsScreen = () => {
     const [loading, setLoading] = useState(false);
     const [category, setCategory] = useState("Home Services");
 
-    const requestPermission = async () => {
-        let {status} = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-            alert('Permission to access location was denied, we need this for the app to work properly!');
+    useEffect(() => {
+        requestPermission().then(r => {
+            //Permission granted
+        });
+        switch (activeTab) {
+            case "BUTLRs":
+                setServiceData(localServices);
+                break;
+            default:
+                setServiceData(localServices);
         }
-    }
+    }, [city, category, activeTab]);
 
     const handleUseMyLocation = async () => {
         setLoading(true);
         // Coordinates of the location you want to search near
-        await getUserLocation()
+        let currentLocation = await getUserLocation();
+        setLocation(currentLocation);
+
         const latitude = location.coords.latitude;
         const longitude = location.coords.longitude;
 
@@ -54,28 +62,6 @@ const RequestsScreen = () => {
             })
             .catch(error => console.error(error));
     }
-
-    const getUserLocation = async () => {
-        await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.BestForNavigation
-        }).then((location) => {
-            setLocation(location);
-        })
-    }
-
-
-    useEffect(() => {
-        requestPermission().then(r => {
-            //Permission granted
-        });
-        switch (activeTab) {
-            case "BUTLRs":
-                setServiceData(localServices);
-                break;
-            default:
-                setServiceData(localServices);
-        }
-    }, [city, category, activeTab]);
 
     return (
         <Screen style={tailwind`bg-white flex-1`}>

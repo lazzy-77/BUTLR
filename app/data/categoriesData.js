@@ -1,3 +1,21 @@
+
+export const categoriesList = [
+    'cleaning-and-laundry',
+    'shopping-and-errands',
+    'auto-and-vehicles',
+    'home-improvement-and-handyman',
+    'gardening-and-lawn-care',
+    'food-and-catering',
+    'personal-styling-and-fashion',
+    'beauty-and-spa',
+    'childcare',
+    'pet-care',
+    'music-and-entertainment',
+    'photography-and-videography',
+    'disposal-and-garbage',
+    'moving-and-storage',
+    'other',
+];
 export const categoriesData = [
     {
         image: require("../assets/images/iron.png"),
