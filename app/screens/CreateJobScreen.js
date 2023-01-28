@@ -9,10 +9,10 @@ import AppFormFields from "../components/forms/AppFormFields";
 import AppFormDescriptionFields from "../components/forms/AppFormDescriptionFields";
 import AppFormJobLocationFields from "../components/forms/AppFormJobLocationFields";
 import AppSubmitButton from "../components/forms/AppSubmitButton";
-import {getUserLocation} from "../utils/location";
 import {functions, httpsCallable} from "../configs/firebase";
 import colors from "../configs/colors";
 import {useNavigation} from "@react-navigation/core";
+import * as Location from 'expo-location';
 
 const CreateJobScreen = () => {
 
@@ -38,19 +38,22 @@ const CreateJobScreen = () => {
 
     const handleCreateJob = async (values) => {
         // Perform API call or other logic to create the job with the provided data
-        const location = await getUserLocation();
-        const coordinates = [location.coords.latitude, location.coords.longitude];
-        const job = {...values, location: coordinates};
+        Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.BestForNavigation
+        }).then(async (location) => {
+            const coordinates = [location.coords.latitude, location.coords.longitude];
+            const job = {...values, location: coordinates};
 
-        const createJob = httpsCallable(functions, 'createJob');
-        await createJob(job).then((result) => {
-            alert("Job created successfully");
-            navigation.navigate("RequestsScreen");
-        }).catch((error) => {
-            alert(error.message);
-        });
+            const createJob = httpsCallable(functions, 'createJob');
+            await createJob(job).then((result) => {
+                alert("Job created successfully");
+                navigation.navigate("RequestsScreen");
+            }).catch((error) => {
+                alert(error.message);
+            });
 
-        console.log(job)
+            console.log(job)
+        })
     }
 
     return (

@@ -9,7 +9,8 @@ import tailwind from 'tailwind-react-native-classnames';
 import {localServices} from '../data/localServices';
 import colors from '../configs/colors'
 import {GOOGLE_MAP_APIKEY} from "@env"
-import { requestPermission,  getUserLocation} from '../utils/location';
+import { requestPermission } from '../utils/location';
+import * as Location from 'expo-location';
 
 const RequestsScreen = () => {
     const [serviceData, setServiceData] = useState(localServices);
@@ -32,35 +33,42 @@ const RequestsScreen = () => {
         }
     }, [city, category, activeTab]);
 
-    const handleUseMyLocation = async () => {
+    const handleUseMyLocation = () => {
         setLoading(true);
+
         // Coordinates of the location you want to search near
-        let currentLocation = await getUserLocation();
-        setLocation(currentLocation);
+        Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.BestForNavigation
+        }).then((location) => {
+            setLocation(location);
+            const latitude = location.coords.latitude;
+            const longitude = location.coords.longitude;
 
-        const latitude = location.coords.latitude;
-        const longitude = location.coords.longitude;
+            // Search radius in meters
+            const radius = 50000;
 
-        // Search radius in meters
-        const radius = 50000;
+            // Make a GET request to the Google Places API
+            fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${radius}&type=town&key=${GOOGLE_MAP_APIKEY}`)
+                .then(response => response.json())
+                .then(data => {
+                    // The API returns an array of nearby places
+                    const places = data.results;
 
-        // Make a GET request to the Google Places API
-        fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${radius}&type=town&key=${GOOGLE_MAP_APIKEY}`)
-            .then(response => response.json())
-            .then(data => {
-                // The API returns an array of nearby places
-                const places = data.results;
+                    // Find the first place that has the "locality" or "political" type
+                    const nearestTown = places.find(place => place.types.includes("locality") || place.types.includes("political"));
 
-                // Find the first place that has the "locality" or "political" type
-                const nearestTown = places.find(place => place.types.includes("locality") || place.types.includes("political"));
+                    // Log the name of the nearest town
+                    console.log(nearestTown.name);
+                    setCity(nearestTown.name);
 
-                // Log the name of the nearest town
-                console.log(nearestTown.name);
-                setCity(nearestTown.name);
-
-                setLoading(false);
-            })
-            .catch(error => console.error(error));
+                    setLoading(false);
+                })
+                .catch(error => console.error(error));
+        }).catch((error) => {
+            Alert.alert("Error", "Please check your internet connection and try again." + error);
+            console.log(error);
+            setLoading(false);
+        })
     }
 
     return (

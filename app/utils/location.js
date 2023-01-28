@@ -7,9 +7,3 @@ export const requestPermission = async () => {
     }
 }
 
-export const getUserLocation = async () => {
-    return await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.BestForNavigation
-    })
-}
-
