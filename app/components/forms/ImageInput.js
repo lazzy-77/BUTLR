@@ -6,8 +6,9 @@ import colors from '../../configs/colors'
 
 //Props list:
 //onSelectImage: function to be called when image is selected
+//PicturesOnly: boolean to specify if only pictures should be selected
+//multipleFiles: boolean to specify if multiple files should be selected
 const ImageInput = (props) => {
-
     const requestPermissions = async () => {
         const {status} = await Promise.all([
             ImagePicker.requestMediaLibraryPermissionsAsync(),
@@ -29,7 +30,7 @@ const ImageInput = (props) => {
             const result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: props.picturesOnly ? ImagePicker.MediaTypeOptions.Images : ImagePicker.MediaTypeOptions.All,
                 quality: 0.5,
-                allowsMultipleSelection: true,
+                allowsMultipleSelection: props.multipleFiles === true,
             })
             if (!result.canceled) props.onSelectImage(result.assets[0].uri)
         } catch (error) {

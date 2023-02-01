@@ -72,7 +72,11 @@ const AccountScreen = () => {
                         />
                     </View>
                     <View style={tailwind`absolute top-5 right-5`}>
-                        <ImageInput picturesOnly={true} onSelectImage={onSelectImage}/>
+                        <ImageInput
+                            picturesOnly={true}
+                            onSelectImage={onSelectImage}
+                            multipleFiles={false}
+                        />
                     </View>
                     <Text style={tailwind`mt-4 text-3xl font-bold`}>{user?.name}</Text>
                     <Text style={tailwind`text-lg text-indigo-900`}>{user?.email}</Text>
