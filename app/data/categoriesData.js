@@ -61,6 +61,24 @@ export const categoriesList = [
     },
 ];
 
+export const categoryToDisplayNameMap = {
+    'cleaning-and-laundry': 'Cleaning and Laundry',
+    'shopping-and-errands': 'Shopping and Errands',
+    'auto-and-vehicles': 'Auto and Vehicles',
+    'home-improvement-and-handyman': 'Home Improvement and Handyman',
+    'gardening-and-lawn-care': 'Gardening and Lawn Care',
+    'food-and-catering': 'Food and Catering',
+    'personal-styling-and-fashion': 'Personal Styling and Fashion',
+    'beauty-and-spa': 'Beauty and Spa',
+    'childcare': 'Childcare',
+    'pet-care': 'Pet Care',
+    'music-and-entertainment': 'Music and Entertainment',
+    'photography-and-videography': 'Photography and Videography',
+    'disposal-and-garbage': 'Disposal and Garbage',
+    'moving-and-storage': 'Moving and Storage',
+    'other': 'Other',
+};
+
 export const categoriesData = [
     {
         image: require("../assets/images/iron.png"),

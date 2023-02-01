@@ -13,6 +13,7 @@ import {functions, httpsCallable} from "../configs/firebase";
 import colors from "../configs/colors";
 import {useNavigation} from "@react-navigation/core";
 import * as Location from 'expo-location';
+import {categoryToDisplayNameMap} from "../data/categoriesData";
 
 const CreateJobScreen = () => {
 
@@ -42,7 +43,7 @@ const CreateJobScreen = () => {
             accuracy: Location.Accuracy.BestForNavigation
         }).then(async (location) => {
             const coordinates = [location.coords.latitude, location.coords.longitude];
-            const job = {...values, location: coordinates};
+            const job = {...values, location: coordinates, categoryDisplayName: categoryToDisplayNameMap[values.category]};
 
             const createJob = httpsCallable(functions, 'createJob');
             await createJob(job).then((result) => {
