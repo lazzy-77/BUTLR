@@ -18,6 +18,19 @@ const AccountScreen = () => {
     const [photo, setPhoto] = useState(defaultProfilePic);
     const [photoUrl, setPhotoUrl] = useState(null);
 
+    useEffect(() => {
+        async function getProfilePic() {
+            const fileRef = ref(storage, auth.currentUser.uid + '/profilePic');
+            const url = getDownloadURL(fileRef);
+            await url;
+            if (url["_z"] !== undefined) {
+                setPhoto({uri: url["_z"]});
+            }
+        }
+
+        getProfilePic()
+    }, [])
+
     const uploadProfilePic = async (image, currentUser) => {
         const fileRef = ref(storage, currentUser.uid + '/profilePic');
         const snapshot = uploadBytesResumable(fileRef, image);
@@ -37,33 +50,33 @@ const AccountScreen = () => {
                 setPhoto(image);
                 updateProfile(auth.currentUser, {photoURL: photoUrl})
                     .then(() => {
-                    alert('Profile picture updated successfully')
-                }).catch((error) => {
+                        alert('Profile picture updated successfully')
+                    }).catch((error) => {
                     console.log(error);
                 })
             }).catch((error) => {
-            console.log(error);
-        })
+                console.log(error);
+            })
     }
 
     return (
         <Screen style={tailwind`flex-1 bg-white`}>
             <AppHead title={`Account`} icon="settings-outline"/>
             <View style={tailwind`w-full relative`}>
-            <View style={tailwind`justify-center items-center `}>
-                <View style={tailwind`rounded-full overflow-hidden w-48 h-48 mt-4`}>
-                    <Image
-                        source={photoUrl ? {uri: photoUrl} : photo}
-                        style={tailwind`w-48 h-48`}
-                        key={photo}
-                    />
+                <View style={tailwind`justify-center items-center `}>
+                    <View style={tailwind`rounded-full overflow-hidden w-48 h-48 mt-4`}>
+                        <Image
+                            source={photoUrl ? {uri: photoUrl} : photo}
+                            style={tailwind`w-48 h-48`}
+                            key={photo}
+                        />
+                    </View>
+                    <View style={tailwind`absolute top-5 right-5`}>
+                        <ImageInput picturesOnly={true} onSelectImage={onSelectImage}/>
+                    </View>
+                    <Text style={tailwind`mt-4 text-3xl font-bold`}>{user?.name}</Text>
+                    <Text style={tailwind`text-lg text-indigo-900`}>{user?.email}</Text>
                 </View>
-                <View style={tailwind`absolute top-5 right-5`}>
-                    <ImageInput picturesOnly={true} onSelectImage={onSelectImage}/>
-                </View>
-                <Text style={tailwind`mt-4 text-3xl font-bold`}>{user?.name}</Text>
-                <Text style={tailwind`text-lg text-indigo-900`}>{user?.email}</Text>
-            </View>
             </View>
             <View style={tailwind`mx-4 border-t border-t-2 mt-5 border-gray-100`}>
                 <Text style={tailwind`text-gray-800 mt-2 text-lg mb-2`}>Saved places</Text>
