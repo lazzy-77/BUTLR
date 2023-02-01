@@ -29,6 +29,7 @@ export default function AppNavigator() {
                     name: authUser.displayName,
                     image: authUser.photoURL,
                     email: authUser.email,
+                    uid: authUser.uid,
                     // location: userLocation,
                 }
                 dispatch(loginUser(user))

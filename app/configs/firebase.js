@@ -3,6 +3,7 @@ import {initializeApp} from "firebase/app";
 import {getFirestore, serverTimestamp} from "firebase/firestore";
 import {getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile} from "firebase/auth";
 import {getFunctions, httpsCallable} from "firebase/functions";
+import {getStorage, ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -25,6 +26,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const timestamp = serverTimestamp();
 const functions = getFunctions(app);
+const storage = getStorage(app);
 
 export {
     auth,
@@ -36,4 +38,8 @@ export {
         timestamp,
     functions,
         httpsCallable,
+    storage,
+        ref,
+        uploadBytesResumable,
+        getDownloadURL
 }

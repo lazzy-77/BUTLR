@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react'
-import { Image, StyleSheet, View, TouchableWithoutFeedback, Alert } from 'react-native'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
+import React, {useEffect} from 'react'
+import {Image, StyleSheet, View, TouchableWithoutFeedback, Alert, Text} from 'react-native'
+import {MaterialCommunityIcons} from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker'
 import colors from '../../configs/colors'
 
-function ImageInput({imageUri, onChangeImage}) {
+//Props list:
+//onSelectImage: function to be called when image is selected
+const ImageInput = (props) => {
 
     const requestPermissions = async () => {
-        const { status } = await Promise.all([
+        const {status} = await Promise.all([
             ImagePicker.requestMediaLibraryPermissionsAsync(),
             ImagePicker.requestCameraPermissionsAsync()
         ])
@@ -22,26 +24,26 @@ function ImageInput({imageUri, onChangeImage}) {
         })
     }, [])
 
-    const selectImage = async () =>{
+    const selectImage = async () => {
         try {
-          const result = await ImagePicker.launchImageLibraryAsync({
-              mediaTypes: ImagePicker.MediaTypeOptions.All,
-              quality: 0.5,
-              allowsMultipleSelection: true,
-          })
-          if(!result.canceled) onChangeImage(result.assets[0].uri)
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: props.picturesOnly ? ImagePicker.MediaTypeOptions.Images : ImagePicker.MediaTypeOptions.All,
+                quality: 0.5,
+                allowsMultipleSelection: true,
+            })
+            if (!result.canceled) props.onSelectImage(result.assets[0].uri)
         } catch (error) {
-          console.log("Error Reading an image", error)
+            console.log("Error Reading an image", error)
         }
     }
 
     const takePicture = async () => {
         try {
             const result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                mediaTypes: props.picturesOnly ? ImagePicker.MediaTypeOptions.Images : ImagePicker.MediaTypeOptions.All,
                 quality: 0.5,
             });
-            if (!result.canceled) onChangeImage(result.assets[0].uri);
+            if (!result.canceled) props.onSelectImage(result.assets[0].uri);
         } catch (error) {
             console.log("Error taking a picture", error);
         }
@@ -49,34 +51,22 @@ function ImageInput({imageUri, onChangeImage}) {
 
 
     const handlePress = () => {
-        if(!imageUri) {
-            Alert.alert(
-                'Select Image',
-                'Where would you like to select the image from?',
-                [
-                    { text: 'Take Picture', onPress: takePicture },
-                    { text: 'Gallery', onPress: selectImage },
-                    { text: 'Cancel', style: 'cancel' },
-                ],
-                { cancelable: true },
-            );
-        }
-        else {
-            Alert.alert('Delete', 'Are you sure you want to delete this image?', [
-                {text: 'yes', onPress: () => onChangeImage(null)},
-                {text: 'no'}
-            ])
-        }
+        Alert.alert(
+            'Select Image',
+            'Where would you like to select the image from?',
+            [
+                {text: 'Take Picture', onPress: takePicture},
+                {text: 'Gallery', onPress: selectImage},
+                {text: 'Cancel', style: 'cancel'},
+            ],
+            {cancelable: true},
+        );
     }
-
 
     return (
         <TouchableWithoutFeedback onPress={handlePress}>
             <View style={styles.container}>
-                {!imageUri ? (<MaterialCommunityIcons name="camera" color={colors.medium} size={35}/>) :
-                (
-                    <Image style={styles.image} source={{uri: imageUri}}/>
-                )}
+                <MaterialCommunityIcons name="camera" color={colors.medium} size={35}/>
             </View>
         </TouchableWithoutFeedback>
     )
@@ -88,8 +78,8 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         justifyContent: 'center',
         alignItems: 'center',
-        height: 100,
-        width: 100,
+        height: 50,
+        width: 50,
         overflow: 'hidden'
     },
     image: {
