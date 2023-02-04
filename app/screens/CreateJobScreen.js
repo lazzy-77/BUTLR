@@ -1,122 +1,137 @@
-import {View, StyleSheet} from 'react-native';
-import tailwind from "tailwind-react-native-classnames";
-import AppHead from "../components/AppHead";
-import Screen from "../components/Screen";
+import React, {useState} from "react";
+import {View, Text, TouchableOpacity, TextInput, Button, ScrollView, StyleSheet} from "react-native";
+import {Formik} from "formik";
 import * as yup from "yup";
-import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
-import AppForm from "../components/forms/AppForm";
-import AppFormFields from "../components/forms/AppFormFields";
-import AppFormDescriptionFields from "../components/forms/AppFormDescriptionFields";
-import AppFormJobLocationFields from "../components/forms/AppFormJobLocationFields";
-import AppSubmitButton from "../components/forms/AppSubmitButton";
-import {functions, httpsCallable} from "../configs/firebase";
+import {Picker} from "@react-native-picker/picker";
 import colors from "../configs/colors";
-import {useNavigation} from "@react-navigation/core";
-import * as Location from 'expo-location';
-import {categoryToDisplayNameMap} from "../data/categoriesData";
+import Screen from "../components/Screen";
+import AppHead from "../components/AppHead";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
+import AppButton from "../components/AppButton";
+import tailwind from "tailwind-react-native-classnames";
 
-const CreateJobScreen = () => {
+const FieldErrorMessage = ({error, visible}) => {
+    if (!error || !visible) return null;
+    return <Text style={{color: "red"}}>{error}</Text>;
+}
 
-    const createJobValidationSchema = yup.object().shape({
-        title: yup
-            .string()
-            .required("Job title is required"),
-        category: yup
-            .string()
-            .required("Job category is required"),
-        duration: yup
-            .string()
-            .required("Job length is required"),
-        pay: yup
-            .string()
-            .required("Job pay is required"),
-        description: yup
-            .string()
-            .required("Job description is required"),
-    });
+const validationSchema = yup.object().shape({
+    title: yup
+        .string()
+        .required("Job title is required"),
+    category: yup
+        .string()
+        .required("Job category is required"),
+    duration: yup
+        .string()
+        .required("Job length is required"),
+    pay: yup
+        .string()
+        .required("Job pay is required"),
+    description: yup
+        .string()
+        .required("Job description is required"),
+});
 
-    const navigation = useNavigation();
-
-    const handleCreateJob = async (values) => {
-        // Perform API call or other logic to create the job with the provided data
-        Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.BestForNavigation
-        }).then(async (location) => {
-            const coordinates = [location.coords.latitude, location.coords.longitude];
-            const job = {...values, location: coordinates, categoryDisplayName: categoryToDisplayNameMap[values.category]};
-
-            const createJob = httpsCallable(functions, 'createJob');
-            await createJob(job).then((result) => {
-                alert("Job created successfully");
-                navigation.navigate("RequestsScreen");
-            }).catch((error) => {
-                alert(error.message);
-            });
-
-            console.log(job)
-        })
-    }
+const FormExample = () => {
+    const [showCategories, setShowCategories] = useState(false);
 
     return (
         <Screen style={styles.container}>
             <AppHead title="Create Job" icon="create"/>
             <KeyboardAwareScrollView style={styles.wrapper}>
-                <View style={styles.form}>
-                    <AppForm
-                        initialValues={{
-                            title: "",
-                            category: "",
-                            duration: "",
-                            pay: "",
-                            description: "",
-                        }}
-                        validationSchema={createJobValidationSchema}
-                        onSubmit={({title, category, duration, pay, description}) => {
-                            const values = {title, category, duration, pay, description};
-                            handleCreateJob(values).then(r => {
-                                //Result is already handles in the handleCreateJob function
-                            })
-                        }}
-                    >
-                        <AppFormFields
-                            name="title"
-                            title={"Job Title"}
-                            placeholder="Briefly describe the job"
-                            keyboardType="text"
-                        />
-                        <AppFormFields
-                            name="category"
-                            title={"Job Category"}
-                            placeholder="Select a category"
-                            keyboardType="text"
-                        />
-                        <AppFormFields
-                            name="duration"
-                            title={"Duration"}
-                            placeholder="How long will the job take?"
-                            keyboardType="text"
-                        />
-                        <AppFormFields
-                            name="pay"
-                            title={"Job Pay"}
-                            placeholder="How much will you pay?"
-                            keyboardType="text"
-                        />
-                        <AppFormDescriptionFields
-                            name="description"
-                            title={"Job Description"}
-                            placeholder="Describe the job in detail and what needs to be done"
-                            keyboardType="text"
-                            style={tailwind`h-40`}
-                        />
-                        <AppSubmitButton title="Create job"/>
-                    </AppForm>
-                </View>
+                <Formik
+                    initialValues={{
+                        title: "",
+                        category: "",
+                        duration: "",
+                        pay: "",
+                        description: "",
+                    }}
+                    validationSchema={validationSchema}
+                    onSubmit={(values) => console.log(values)}
+                >
+                    {({handleChange, handleBlur, handleSubmit, values, errors, touched}) => (
+                        <View>
+                            <View style={fieldStyles.container}>
+                                <Text>Title:</Text>
+                                <TextInput
+                                    placeholder={"e.g. 'Need a babysitter'"}
+                                    onChangeText={handleChange("title")}
+                                    onBlur={handleBlur("title")}
+                                    value={values.title}
+                                    style={fieldStyles.input}
+                                />
+                                <FieldErrorMessage error={errors.title} visible={touched.title}/>
+                            </View>
+                            <View style={fieldStyles.container}>
+                                <Text>Category:</Text>
+                                <TouchableOpacity
+                                    style={fieldStyles.input}
+                                    onPress={() => setShowCategories(!showCategories)}
+                                >
+                                    <Text>{values.category || "Select a category"}</Text>
+                                </TouchableOpacity>
+                                {showCategories && (
+                                    <Picker
+                                        selectedValue={values.category}
+                                        onValueChange={(itemValue) => {
+                                            handleChange("category")(itemValue);
+                                            setShowCategories(false);
+                                        }}
+                                    >
+                                        <Picker.Item label="Option 1" value="Option 1"/>
+                                        <Picker.Item label="Option 2" value="Option 2"/>
+                                        <Picker.Item label="Option 3" value="Option 3"/>
+                                    </Picker>
+                                )}
+                                <FieldErrorMessage error={errors.category} visible={touched.category}/>
+                            </View>
+                            <View style={fieldStyles.container}>
+                                <Text>Duration:</Text>
+                                <TextInput
+                                    onChangeText={handleChange("duration")}
+                                    onBlur={handleBlur("duration")}
+                                    value={values.duration}
+                                    style={fieldStyles.input}
+                                    placeholder={"e.g. '1 hour'"}
+                                />
+                                <FieldErrorMessage error={errors.duration} visible={touched.duration}/>
+                            </View>
+                            <View style={fieldStyles.container}>
+                                <Text>Pay:</Text>
+                                <TextInput
+                                    onChangeText={handleChange("pay")}
+                                    onBlur={handleBlur("pay")}
+                                    value={values.pay}
+                                    style={fieldStyles.input}
+                                    placeholder={"e.g. '£10 per hour' or '£100 for job'"}
+                                />
+                                <FieldErrorMessage error={errors.pay} visible={touched.pay}/>
+                            </View>
+                            <View style={fieldStyles.container}>
+                                <Text>Description:</Text>
+                                <TextInput
+                                    onChangeText={handleChange("description")}
+                                    onBlur={handleBlur("description")}
+                                    value={values.description}
+                                    style={[
+                                        fieldStyles.input,
+                                        tailwind`h-40`
+                                    ]}
+                                    multiline={true}
+                                    placeholder={"e.g. 'Baby sit 2 children, 1 year old and 3 year old'"}
+                                />
+                                <FieldErrorMessage error={errors.description} visible={touched.description}/>
+                            </View>
+                            <AppButton title="Submit" onPress={handleSubmit}/>
+                        </View>
+                    )}
+                </Formik>
             </KeyboardAwareScrollView>
         </Screen>
-
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -133,4 +148,28 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CreateJobScreen;
+const fieldStyles = StyleSheet.create({
+    container: {
+        position: 'relative',
+        marginBottom: 20
+    },
+    input: {
+        borderColor: colors.medium,
+        backgroundColor: colors.light,
+        borderWidth: 1,
+        paddingHorizontal: 20,
+        paddingVertical: 15,
+        borderRadius: 10,
+        marginTop: 15,
+    },
+    inputError: {
+        borderColor: colors.danger
+    },
+    icon: {
+        position: 'absolute',
+        right: 15,
+        top: 32
+    }
+})
+
+export default FormExample;

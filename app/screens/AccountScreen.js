@@ -103,6 +103,7 @@ const AccountScreen = () => {
                 <TouchableOpacity onPress={() => console.log(auth.currentUser)}>
                     <Text style={tailwind`text-green-900 mt-2`}>print user</Text>
                 </TouchableOpacity>
+                <CreateDummyData/>
             </View>
         </Screen>
     );

@@ -12,6 +12,7 @@
     "@expo/vector-icons": "^13.0.0",
     "@faker-js/faker": "^7.6.0",
     "@react-native-firebase/app": "^16.5.1",
+    "@react-native-picker/picker": "^2.4.8",
     "@react-navigation/bottom-tabs": "^6.4.0",
     "@react-navigation/core": "^6.4.0",
     "@react-navigation/native": "^6.0.13",
