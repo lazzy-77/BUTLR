@@ -9,6 +9,10 @@ import AppHead from "../components/AppHead";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import AppButton from "../components/AppButton";
 import tailwind from "tailwind-react-native-classnames";
+import {categoriesList, displayNameToCategoryMap, categoryToDisplayNameMap} from "../data/categoriesData";
+import {useNavigation} from "@react-navigation/core";
+import {httpsCallable, functions} from "../configs/firebase";
+import * as Location from "expo-location";
 
 const FieldErrorMessage = ({error, visible}) => {
     if (!error || !visible) return null;
@@ -36,6 +40,29 @@ const validationSchema = yup.object().shape({
 const FormExample = () => {
     const [showCategories, setShowCategories] = useState(false);
 
+    const navigation = useNavigation();
+
+    const handleCreateJob = async (values) => {
+        // Perform API call or other logic to create the job with the provided data
+        Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.BestForNavigation
+        }).then(async (location) => {
+            const coordinates = [location.coords.latitude, location.coords.longitude];
+            values.category = displayNameToCategoryMap[values.category];
+            const job = {...values, location: coordinates, categoryDisplayName: categoryToDisplayNameMap[values.category]};
+
+            const createJob = httpsCallable(functions, 'createJob');
+            await createJob(job).then((result) => {
+                alert("Job created successfully");
+                navigation.navigate("RequestsScreen");
+            }).catch((error) => {
+                alert(error.message);
+            });
+
+            console.log(job)
+        })
+    }
+
     return (
         <Screen style={styles.container}>
             <AppHead title="Create Job" icon="create"/>
@@ -49,7 +76,12 @@ const FormExample = () => {
                         description: "",
                     }}
                     validationSchema={validationSchema}
-                    onSubmit={(values) => console.log(values)}
+                    onSubmit={({title, category, duration, pay, description}) => {
+                        const values = {title, category, duration, pay, description};
+                        handleCreateJob(values).then(r => {
+                            //Result is already handled in the handleCreateJob function
+                        })
+                    }}
                 >
                     {({handleChange, handleBlur, handleSubmit, values, errors, touched}) => (
                         <View>
@@ -80,9 +112,10 @@ const FormExample = () => {
                                             setShowCategories(false);
                                         }}
                                     >
-                                        <Picker.Item label="Option 1" value="Option 1"/>
-                                        <Picker.Item label="Option 2" value="Option 2"/>
-                                        <Picker.Item label="Option 3" value="Option 3"/>
+                                        {categoriesList.map((category) => (
+                                            <Picker.Item label={category.displayName} value={category.displayName}
+                                                         key={category.category}/>
+                                        ))}
                                     </Picker>
                                 )}
                                 <FieldErrorMessage error={errors.category} visible={touched.category}/>

@@ -79,6 +79,24 @@ export const categoryToDisplayNameMap = {
     'other': 'Other',
 };
 
+export const displayNameToCategoryMap = {
+    "Cleaning and Laundry" : "cleaning-and-laundry",
+    "Shopping and Errands" : "shopping-and-errands",
+    "Auto and Vehicles" : "auto-and-vehicles",
+    "Home Improvement and Handyman" : "home-improvement-and-handyman",
+    "Gardening and Lawn Care" : "gardening-and-lawn-care",
+    "Food and Catering" : "food-and-catering",
+    "Personal Styling and Fashion" : "personal-styling-and-fashion",
+    "Beauty and Spa" : "beauty-and-spa",
+    "Childcare" : "childcare",
+    "Pet Care" : "pet-care",
+    "Music and Entertainment" : "music-and-entertainment",
+    "Photography and Videography" : "photography-and-videography",
+    "Disposal and Garbage" : "disposal-and-garbage",
+    "Moving and Storage" : "moving-and-storage",
+    "Other" : "other"
+};
+
 export const categoriesData = [
     {
         image: require("../assets/images/iron.png"),
