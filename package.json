@@ -20,6 +20,7 @@
     "dotenv": "^16.0.3",
     "env": "^0.0.2",
     "expo": "~47.0.3",
+    "expo-av": "^13.0.2",
     "expo-constants": "^14.0.2",
     "expo-image-picker": "^14.0.1",
     "expo-location": "^15.0.1",

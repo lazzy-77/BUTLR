@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {View, Text, TouchableOpacity, TextInput, Button, Image, StyleSheet, FlatList} from "react-native";
+import React, {useState} from "react";
+import {View, Text, TouchableOpacity, TextInput, Image, StyleSheet, ActivityIndicator} from "react-native";
 import {Formik} from "formik";
 import * as yup from "yup";
 import {Picker} from "@react-native-picker/picker";
@@ -15,6 +15,7 @@ import {httpsCallable, functions, storage, ref, uploadBytesResumable, getDownloa
 import * as Location from "expo-location";
 import ImageInput from "../components/forms/ImageInput";
 import uuid from "react-native-uuid";
+import {Video} from "expo-av";
 
 const FieldErrorMessage = ({error, visible}) => {
     if (!error || !visible) return null;
@@ -39,9 +40,10 @@ const validationSchema = yup.object().shape({
         .required("Job description is required"),
 });
 
-const FormExample = () => {
+const CreateJobScreen = () => {
     const [showCategories, setShowCategories] = useState(false);
     const [files, setFiles] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const navigation = useNavigation();
 
@@ -52,31 +54,16 @@ const FormExample = () => {
     const uploadMedia = async (media) => {
         const uri = await fetch(media.uri);
         const blob = await uri.blob();
-        const fileRef = ref(storage,  'jobMedia/' + uuid.v4());
+        const fileRef = ref(storage, 'jobMedia/' + uuid.v4());
         const snapshot = uploadBytesResumable(fileRef, blob);
         await snapshot;
         const url = getDownloadURL(fileRef);
         await url;
         return url;
-        // setPhotoUrl(url["_z"]);
-    }
-
-    const logFiles = async () => {
-        console.log("Files: ")
-        for (const file of files) {
-            console.log(file)
-        }
-        // const mediaTest = [];
-        // if (files.length) {
-        //     for (const file of files) {
-        //         const url = await uploadMedia(file);
-        //         mediaTest.push(url);
-        //     }
-        // }
     }
 
     const handleCreateJob = async (values) => {
-        // Perform API call or other logic to create the job with the provided data
+        setLoading(true);
         Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.BestForNavigation
         }).then(async (location) => {
@@ -101,12 +88,11 @@ const FormExample = () => {
             const createJob = httpsCallable(functions, 'createJob');
             await createJob(job).then((result) => {
                 alert("Job created successfully");
+                setLoading(false);
                 navigation.navigate("RequestsScreen");
             }).catch((error) => {
                 alert(error.message);
             });
-
-            console.log(job)
         })
     }
 
@@ -211,18 +197,31 @@ const FormExample = () => {
                                     picturesOnly={false}
                                     onSelectImage={onSelectImage}
                                 />
-                                {files?.map(file =>(
-                                    <Image
-                                        source={file}
-                                        style={tailwind`w-48 h-48`}
-                                        key={file.assetId}
-                                    />
-                                ))}
-                                <TouchableOpacity onPress={logFiles}>
-                                    <Text style={tailwind`text-blue-500`}>Log files</Text>
-                                </TouchableOpacity>
+                                {files?.map(file => {
+
+                                    if (file.type === "video") {
+                                        return (
+                                            <Video
+                                                source={file}
+                                                style={tailwind`w-48 h-48`}
+                                                key={file.assetId}
+                                                useNativeControls
+                                                resizeMode="cover"
+                                            />
+                                        )
+                                    }
+
+                                    return (
+                                        <Image
+                                            source={file}
+                                            style={tailwind`w-48 h-48`}
+                                            key={file.assetId}
+                                        />
+                                    )
+                                })}
                             </View>
-                            <AppButton title="Submit" onPress={handleSubmit}/>
+                            {loading && <ActivityIndicator size="large" color={colors.primary} style={tailwind`mt-2 mb-6`}/>}
+                            {!loading && <AppButton title="Submit" onPress={handleSubmit}/>}
                         </View>
                     )}
                 </Formik>
@@ -270,4 +269,4 @@ const fieldStyles = StyleSheet.create({
     }
 })
 
-export default FormExample;
+export default CreateJobScreen;
