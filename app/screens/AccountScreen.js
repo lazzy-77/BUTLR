@@ -20,7 +20,7 @@ const AccountScreen = () => {
 
     useEffect(() => {
         async function getProfilePic() {
-            const fileRef = ref(storage, auth.currentUser.uid + '/profilePic');
+            const fileRef = ref(storage, 'users/' + auth.currentUser.uid + '/profilePic');
             const url = getDownloadURL(fileRef);
             await url;
             if (url["_z"] !== undefined) {
@@ -32,12 +32,11 @@ const AccountScreen = () => {
     }, [])
 
     const uploadProfilePic = async (image, currentUser) => {
-        const fileRef = ref(storage, currentUser.uid + '/profilePic');
+        const fileRef = ref(storage, 'users/' + currentUser.uid + '/profilePic');
         const snapshot = uploadBytesResumable(fileRef, image);
         await snapshot;
         const url = getDownloadURL(fileRef);
         await url;
-        console.log(url["_z"])
         setPhotoUrl(url["_z"]);
     }
 
@@ -48,6 +47,7 @@ const AccountScreen = () => {
         await uploadProfilePic(blob, auth.currentUser)
             .then(() => {
                 setPhoto(image);
+                console.log(image)
                 updateProfile(auth.currentUser, {photoURL: photoUrl})
                     .then(() => {
                         alert('Profile picture updated successfully')

@@ -5,7 +5,7 @@ import * as ImagePicker from 'expo-image-picker'
 import colors from '../../configs/colors'
 
 //Props list:
-//onSelectImage: function to be called when image is selected
+//onSelectImage: function passed in and to be called when image is selected
 //PicturesOnly: boolean to specify if only pictures should be selected
 //multipleFiles: boolean to specify if multiple files should be selected
 const ImageInput = (props) => {
@@ -32,6 +32,10 @@ const ImageInput = (props) => {
                 quality: 0.5,
                 allowsMultipleSelection: props.multipleFiles === true,
             })
+            if (!result.canceled && props.multipleFiles) {
+                props.onSelectImage(result.assets)
+                return;
+            }
             if (!result.canceled) props.onSelectImage(result.assets[0].uri)
         } catch (error) {
             console.log("Error Reading an image", error)

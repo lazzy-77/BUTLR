@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import {View, Text, TouchableOpacity, TextInput, Button, ScrollView, StyleSheet} from "react-native";
+import React, {useEffect, useState} from "react";
+import {View, Text, TouchableOpacity, TextInput, Button, Image, StyleSheet, FlatList} from "react-native";
 import {Formik} from "formik";
 import * as yup from "yup";
 import {Picker} from "@react-native-picker/picker";
@@ -11,8 +11,10 @@ import AppButton from "../components/AppButton";
 import tailwind from "tailwind-react-native-classnames";
 import {categoriesList, displayNameToCategoryMap, categoryToDisplayNameMap} from "../data/categoriesData";
 import {useNavigation} from "@react-navigation/core";
-import {httpsCallable, functions} from "../configs/firebase";
+import {httpsCallable, functions, storage, ref, uploadBytesResumable, getDownloadURL} from "../configs/firebase";
 import * as Location from "expo-location";
+import ImageInput from "../components/forms/ImageInput";
+import uuid from "react-native-uuid";
 
 const FieldErrorMessage = ({error, visible}) => {
     if (!error || !visible) return null;
@@ -39,8 +41,39 @@ const validationSchema = yup.object().shape({
 
 const FormExample = () => {
     const [showCategories, setShowCategories] = useState(false);
+    const [files, setFiles] = useState([]);
 
     const navigation = useNavigation();
+
+    const onSelectImage = async (images) => {
+        setFiles(images)
+    }
+
+    const uploadMedia = async (media) => {
+        const uri = await fetch(media.uri);
+        const blob = await uri.blob();
+        const fileRef = ref(storage,  'jobMedia/' + uuid.v4());
+        const snapshot = uploadBytesResumable(fileRef, blob);
+        await snapshot;
+        const url = getDownloadURL(fileRef);
+        await url;
+        return url;
+        // setPhotoUrl(url["_z"]);
+    }
+
+    const logFiles = async () => {
+        console.log("Files: ")
+        for (const file of files) {
+            console.log(file)
+        }
+        // const mediaTest = [];
+        // if (files.length) {
+        //     for (const file of files) {
+        //         const url = await uploadMedia(file);
+        //         mediaTest.push(url);
+        //     }
+        // }
+    }
 
     const handleCreateJob = async (values) => {
         // Perform API call or other logic to create the job with the provided data
@@ -49,7 +82,21 @@ const FormExample = () => {
         }).then(async (location) => {
             const coordinates = [location.coords.latitude, location.coords.longitude];
             values.category = displayNameToCategoryMap[values.category];
-            const job = {...values, location: coordinates, categoryDisplayName: categoryToDisplayNameMap[values.category]};
+
+            const media = [];
+            if (files.length > 0) {
+                for (const file of files) {
+                    const url = await uploadMedia(file);
+                    media.push(url);
+                }
+            }
+
+            const job = {
+                ...values,
+                location: coordinates,
+                categoryDisplayName: categoryToDisplayNameMap[values.category],
+                media: media
+            };
 
             const createJob = httpsCallable(functions, 'createJob');
             await createJob(job).then((result) => {
@@ -156,6 +203,24 @@ const FormExample = () => {
                                     placeholder={"e.g. 'Baby sit 2 children, 1 year old and 3 year old'"}
                                 />
                                 <FieldErrorMessage error={errors.description} visible={touched.description}/>
+                            </View>
+                            <View style={fieldStyles.container}>
+                                <Text>Pictures and Videos:</Text>
+                                <ImageInput
+                                    multipleFiles={true}
+                                    picturesOnly={false}
+                                    onSelectImage={onSelectImage}
+                                />
+                                {files?.map(file =>(
+                                    <Image
+                                        source={file}
+                                        style={tailwind`w-48 h-48`}
+                                        key={file.assetId}
+                                    />
+                                ))}
+                                <TouchableOpacity onPress={logFiles}>
+                                    <Text style={tailwind`text-blue-500`}>Log files</Text>
+                                </TouchableOpacity>
                             </View>
                             <AppButton title="Submit" onPress={handleSubmit}/>
                         </View>
