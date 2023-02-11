@@ -48,7 +48,12 @@ const CreateJobScreen = () => {
     const navigation = useNavigation();
 
     const onSelectImage = async (images) => {
-        setFiles(images)
+        const newImages = [...files];
+        console.log(images)
+        for (const image of images) {
+            newImages.push(image);
+        }
+        setFiles(newImages);
     }
 
     const uploadMedia = async (media) => {
@@ -204,23 +209,23 @@ const CreateJobScreen = () => {
                                             <Video
                                                 source={file}
                                                 style={tailwind`w-48 h-48`}
-                                                key={file.assetId}
+                                                key={file.assetId ? file.assetId : file.uri}
                                                 useNativeControls
                                                 resizeMode="cover"
                                             />
                                         )
                                     }
-
                                     return (
                                         <Image
                                             source={file}
                                             style={tailwind`w-48 h-48`}
-                                            key={file.assetId}
+                                            key={file.assetId ? file.assetId : file.uri}
                                         />
                                     )
                                 })}
                             </View>
-                            {loading && <ActivityIndicator size="large" color={colors.primary} style={tailwind`mt-2 mb-6`}/>}
+                            {loading &&
+                                <ActivityIndicator size="large" color={colors.primary} style={tailwind`mt-2 mb-6`}/>}
                             {!loading && <AppButton title="Submit" onPress={handleSubmit}/>}
                         </View>
                     )}

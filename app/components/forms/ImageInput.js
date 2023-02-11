@@ -48,6 +48,10 @@ const ImageInput = (props) => {
                 mediaTypes: props.picturesOnly ? ImagePicker.MediaTypeOptions.Images : ImagePicker.MediaTypeOptions.All,
                 quality: 0.5,
             });
+            if (!result.canceled && props.multipleFiles) {
+                props.onSelectImage(result.assets)
+                return;
+            }
             if (!result.canceled) props.onSelectImage(result.assets[0].uri);
         } catch (error) {
             console.log("Error taking a picture", error);
