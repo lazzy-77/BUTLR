@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, ScrollView, Alert, ActivityIndicator} from 'react-native';
+import {StyleSheet, ScrollView, Alert, ActivityIndicator, Text, TouchableOpacity} from 'react-native';
 import ScreenHeader from "../components/ScreenHeader";
 import Screen from '../components/Screen'
 import Categories from '../components/Categories'
@@ -8,34 +8,73 @@ import ServiceItem from "../components/ServiceItem";
 import tailwind from 'tailwind-react-native-classnames';
 import {localServices} from '../data/localServices';
 import colors from '../configs/colors'
+import {functions, httpsCallable, db, doc, getDocs,} from '../configs/firebase';
 import {GOOGLE_MAP_APIKEY} from "@env"
-import { requestPermission } from '../utils/location';
+import {requestPermission} from '../utils/location';
 import * as Location from 'expo-location';
 
+
 const RequestsScreen = () => {
-    const [serviceData, setServiceData] = useState(localServices);
+    const [serviceData, setServiceData] = useState(null);
     const [city, setCity] = useState("San Francisco");
     const [location, setLocation] = useState(null);
-    const [activeTab, setActiveTab] = useState("BUTLRs");
     const [loading, setLoading] = useState(false);
     const [category, setCategory] = useState("Home Services");
 
+    //Get user location on initial load
+    useEffect(() => {
+        handleUseMyLocation();
+    }, [])
+
+    //Get service data when location changes
+    useEffect(() => {
+        setServiceData(null);
+        getServiceData().then(r => {
+            //Service data loaded
+        })
+    }, [location])
+
+
+    //Get location permission
     useEffect(() => {
         requestPermission().then(r => {
             //Permission granted
         });
-        switch (activeTab) {
-            case "BUTLRs":
-                setServiceData(localServices);
-                break;
-            default:
-                setServiceData(localServices);
+
+    }, [city, category])
+
+    const getServiceData = async () => {
+
+        if (location === null) {
+            return;
         }
-    }, [city, category, activeTab]);
+
+        setLoading(true);
+
+        const latitude = location.coords.latitude;
+        const longitude = location.coords.longitude;
+
+        const object = {
+            location: {
+                latitude: latitude,
+                longitude: longitude
+            }
+        }
+        console.log("SENDING OBJECT: ", object);
+        const getJobsWithRadius = httpsCallable(functions, 'getJobsWithRadius');
+        await getJobsWithRadius(object).then((result) => {
+            if (result.data.length === 0) {
+                Alert.alert("No results found", "Try a different location, category or radius");
+                setServiceData(null);
+            } else {
+                setServiceData(result.data);
+            }
+        });
+        setLoading(false);
+    }
 
     const handleUseMyLocation = () => {
         setLoading(true);
-
         // Coordinates of the location you want to search near
         Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.BestForNavigation
@@ -60,25 +99,32 @@ const RequestsScreen = () => {
                     // Log the name of the nearest town
                     console.log(nearestTown.name);
                     setCity(nearestTown.name);
-
                     setLoading(false);
                 })
                 .catch(error => console.error(error));
         }).catch((error) => {
             Alert.alert("Error", "Please check your internet connection and try again." + error);
-            console.log(error);
             setLoading(false);
+            console.log(error);
         })
     }
 
     return (
         <Screen style={tailwind`bg-white flex-1`}>
-            <ScreenHeader activeTab={activeTab} setActiveTab={setActiveTab} screenName="Requests"/>
-            <SearchBar setCity={setCity} city={city} handleUseMyLocation={handleUseMyLocation} location={location}/>
+            <ScreenHeader screenName="Requests"/>
+            <SearchBar
+                setCity={setCity}
+                city={city}
+                handleUseMyLocation={handleUseMyLocation}
+                location={location}
+                setLocation={setLocation}
+            />
             <ScrollView style={tailwind`flex-1`} showsVerticalScrollIndicator={false}>
                 <Categories setCategory={setCategory}/>
                 {loading && <ActivityIndicator size="large" color={colors.primary} style={tailwind`mt-2 mb-6`}/>}
-                <ServiceItem serviceData={serviceData}/>
+                {serviceData === null ? <Text style={tailwind`text-center text-gray-500 mt-2`}>No requests found</Text>
+                    :
+                    <ServiceItem serviceData={serviceData} userLocation={location}/>}
             </ScrollView>
         </Screen>
     );

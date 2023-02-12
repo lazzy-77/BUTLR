@@ -14,9 +14,13 @@ const CreateDummyData = () => {
             const description = faker.commerce.productDescription();
             const category = faker.helpers.arrayElement(categories)
             const categoryDisplayName = categoryToDisplayNameMap[category];
-            const location = faker.address.nearbyGPSCoordinate([54.607868, -5.926437], 100, true);
-            const duration = faker.datatype.number({min: 15, max: 480});
-            const pay = faker.datatype.number({min: 10, max: 100});
+            const location = faker.address.nearbyGPSCoordinate([54.607868, -5.926437], 25, true);
+            const duration = `${faker.datatype.number({min: 15, max: 480})} mins`;
+            const pay = `${faker.datatype.number({min: 10, max: 100})} ${faker.helpers.arrayElement(["per hour", "per item", "for job"])}`;
+            const media = [];
+            for (let j = 0; j < 3; j++) {
+                media.push(faker.image.cats());
+            }
 
             const job = {
                 title,
@@ -26,6 +30,7 @@ const CreateDummyData = () => {
                 location,
                 duration,
                 pay,
+                media
             };
 
             console.log(job)

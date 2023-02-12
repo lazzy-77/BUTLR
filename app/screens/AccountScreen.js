@@ -22,10 +22,13 @@ const AccountScreen = () => {
         async function getProfilePic() {
             const fileRef = ref(storage, 'users/' + auth.currentUser.uid + '/profilePic');
             const url = getDownloadURL(fileRef);
-            await url;
-            if (url["_z"] !== undefined) {
-                setPhoto({uri: url["_z"]});
-            }
+            await url.then(r => {
+                if (url["_z"] !== undefined) {
+                    setPhoto({uri: url["_z"]});
+                }
+            }).catch(e => {
+                console.log(e);
+            })
         }
 
         getProfilePic()

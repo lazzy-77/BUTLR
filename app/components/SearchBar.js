@@ -5,7 +5,7 @@ import {GOOGLE_MAP_APIKEY} from "@env"
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
 import {Ionicons, FontAwesome5} from '@expo/vector-icons';
 
-const SearchBar = ({setCity, city, handleUseMyLocation}) => {
+const SearchBar = ({setCity, city, handleUseMyLocation, location, setLocation}) => {
 
     return (
         <View style={tailwind`flex-row mt-3 px-4 pb-3 border-b border-gray-100 border-b-2`}>
@@ -15,6 +15,13 @@ const SearchBar = ({setCity, city, handleUseMyLocation}) => {
                 debounce={400}
                 onPress={(data, details= null) => {
                     setCity(data.structured_formatting.main_text);
+                    const location = {
+                        coords: {
+                            latitude: details.geometry.location.lat,
+                            longitude: details.geometry.location.lng
+                        }
+                    }
+                    setLocation(location);
                     console.log(data, "\n", "\n", "\n", details.geometry.location);
                 }}
                 minLength={2}
