@@ -122,7 +122,7 @@ const RequestsScreen = () => {
             <ScrollView style={tailwind`flex-1`} showsVerticalScrollIndicator={false}>
                 <Categories setCategory={setCategory}/>
                 {loading && <ActivityIndicator size="large" color={colors.primary} style={tailwind`mt-2 mb-6`}/>}
-                {serviceData === null ? <Text style={tailwind`text-center text-gray-500 mt-2`}>No requests found</Text>
+                {serviceData === null && !loading ? <Text style={tailwind`text-center text-gray-500 mt-2`}>No requests found</Text>
                     :
                     <ServiceItem serviceData={serviceData} userLocation={location}/>}
             </ScrollView>
