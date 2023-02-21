@@ -69,7 +69,7 @@ const CreateJobScreen = () => {
 
     const handleCreateJob = async (values) => {
         setLoading(true);
-        Location.getCurrentPositionAsync({
+        await Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.BestForNavigation
         }).then(async (location) => {
             const coordinates = [location.coords.latitude, location.coords.longitude];
@@ -79,7 +79,11 @@ const CreateJobScreen = () => {
             if (files.length > 0) {
                 for (const file of files) {
                     const url = await uploadMedia(file);
-                    media.push(url);
+                    const mediaObject = {
+                        uri: url,
+                        type: file.type
+                    }
+                    media.push(mediaObject);
                 }
             }
 
@@ -211,6 +215,8 @@ const CreateJobScreen = () => {
                                                 style={tailwind`w-48 h-48`}
                                                 key={file.assetId ? file.assetId : file.uri}
                                                 useNativeControls
+                                                shouldPlay
+                                                isLooping
                                                 resizeMode="cover"
                                             />
                                         )

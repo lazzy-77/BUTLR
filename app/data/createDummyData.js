@@ -19,7 +19,11 @@ const CreateDummyData = () => {
             const pay = `${faker.datatype.number({min: 10, max: 100})} ${faker.helpers.arrayElement(["per hour", "per item", "for job"])}`;
             const media = [];
             for (let j = 0; j < 3; j++) {
-                media.push(faker.image.cats());
+                const mediaObject = {
+                    uri: faker.image.cats(),
+                    type: 'image',
+                }
+                media.push(mediaObject);
             }
 
             const job = {

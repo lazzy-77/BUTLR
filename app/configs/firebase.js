@@ -3,7 +3,7 @@ import {initializeApp} from "firebase/app";
 import {getFirestore, serverTimestamp, collection, doc, getDoc, setDoc, getDocs} from "firebase/firestore";
 import {getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile} from "firebase/auth";
 import {getFunctions, httpsCallable} from "firebase/functions";
-import {getStorage, ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
+import {getStorage, ref, uploadBytesResumable, getDownloadURL, getBlob} from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -46,5 +46,6 @@ export {
     storage,
         ref,
         uploadBytesResumable,
-        getDownloadURL
+        getDownloadURL,
+        getBlob
 }
