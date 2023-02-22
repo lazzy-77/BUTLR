@@ -11,6 +11,7 @@
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
     "@faker-js/faker": "^7.6.0",
+    "@miblanchard/react-native-slider": "^2.2.0",
     "@react-native-firebase/app": "^16.5.1",
     "@react-native-picker/picker": "^2.4.8",
     "@react-navigation/bottom-tabs": "^6.4.0",
@@ -33,6 +34,7 @@
     "react-is": "^18.2.0",
     "react-native": "0.70.5",
     "react-native-bouncy-checkbox": "^3.0.6",
+    "react-native-dropdown-picker": "^5.4.4",
     "react-native-gesture-handler": "^2.8.0",
     "react-native-google-places-autocomplete": "^2.5.1",
     "react-native-image-picker": "^5.0.1",

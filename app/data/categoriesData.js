@@ -61,6 +61,70 @@ export const categoriesList = [
     },
 ];
 
+export const categoriesDropDownList = [
+    {
+        value: 'cleaning-and-laundry',
+        label: 'Cleaning and Laundry',
+    },
+    {
+        value: 'shopping-and-errands',
+        label: 'Shopping and Errands',
+    },
+    {
+        value: 'auto-and-vehicles',
+        label: 'Auto and Vehicles',
+    },
+    {
+        value: 'home-improvement-and-handyman',
+        label: 'Home Improvement and Handyman',
+    },
+    {
+        value: 'gardening-and-lawn-care',
+        label: 'Gardening and Lawn Care',
+    },
+    {
+        value: 'food-and-catering',
+        label: 'Food and Catering',
+    },
+    {
+        value: 'personal-styling-and-fashion',
+        label: 'Personal Styling and Fashion',
+    },
+    {
+        value: 'beauty-and-spa',
+        label: 'Beauty and Spa',
+    },
+    {
+        value: 'childcare',
+        label: 'Childcare',
+    },
+    {
+        value: 'pet-care',
+        label: 'Pet Care',
+    },
+    {
+        value: 'music-and-entertainment',
+        label: 'Music and Entertainment',
+    },
+    {
+        value: 'photography-and-videography',
+        label: 'Photography and Videography',
+    },
+    {
+        value: 'disposal-and-garbage',
+        label: 'Disposal and Garbage',
+    },
+    {
+        value: 'moving-and-storage',
+        label: 'Moving and Storage',
+    },
+    {
+        value: 'other',
+        label: 'Other',
+    },
+];
+
+
 export const categoryToDisplayNameMap = {
     'cleaning-and-laundry': 'Cleaning and Laundry',
     'shopping-and-errands': 'Shopping and Errands',

@@ -5,13 +5,8 @@ import {AntDesign, MaterialCommunityIcons, Ionicons, Foundation, Entypo, Octicon
 import tailwind from 'tailwind-react-native-classnames';
 import ServiceMap from '../components/ServiceMap';
 import {getDistance} from "geolib";
-import Carousel from "react-native-snap-carousel";
 import {Video} from "expo-av";
-import {httpsCallable, functions, ref, storage, auth, getDownloadURL} from "../configs/firebase";
-
-const CarouselItem = ({item, index}) => {
-    return <Image key={index} style={tailwind`w-40 h-40 m-1 rounded-md`} source={{uri: item.uri}}/>
-}
+import {httpsCallable, functions, ref, storage, getDownloadURL} from "../configs/firebase";
 
 const DetailsScreen = ({route, navigation}) => {
     const [jobUser, setJobUser] = useState(null);
