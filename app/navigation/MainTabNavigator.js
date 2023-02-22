@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import {Feather, Ionicons} from '@expo/vector-icons';
 import colors from '../configs/colors';
-import RequestsScreen from '../screens/RequestsScreen'
+import JobsScreen from '../screens/JobsScreen'
 import TabCartButton from '../components/TabCartButton'
 import CartScreen from '../screens/CartScreen';
 import AccountScreen from '../screens/AccountScreen';
@@ -24,18 +24,14 @@ const MainTabNavigator = () => {
                 },
             }}
         >
-            <Tab.Screen name="Requests" component={RequestsScreen}
+            <Tab.Screen name="Jobs" component={JobsScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="create" color={color} size={size} />
                     )
                 }}
             />
-            <Tab.Screen name="Cart" component={CartScreen}
-                options={({ navigation }) => ({
-                    tabBarButton: () => <TabCartButton onPress={() => navigation.navigate('Cart')} />
-                })}
-            />
+
             <Tab.Screen name="Account" component={AccountScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => (

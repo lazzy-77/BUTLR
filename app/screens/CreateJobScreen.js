@@ -98,7 +98,7 @@ const CreateJobScreen = () => {
             await createJob(job).then((result) => {
                 alert("Job created successfully");
                 setLoading(false);
-                navigation.navigate("RequestsScreen");
+                navigation.navigate("JobsScreen");
             }).catch((error) => {
                 alert(error.message);
             });

@@ -15,7 +15,7 @@ export default function HomeNavigator() {
                 headerShown: false
             }}
         >
-            <Stack.Screen name="RequestsScreen" component={MainTabNavigator} />
+            <Stack.Screen name="JobsScreen" component={MainTabNavigator} />
             <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
             <Stack.Screen name="CreateJobScreen" component={CreateJobScreen} />
             <Stack.Screen name="SuccessScreen" component={SuccessScreen} />

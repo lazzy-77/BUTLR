@@ -16,7 +16,7 @@ import {categoriesDropDownList} from "../data/categoriesData";
 import {Slider} from '@miblanchard/react-native-slider';
 
 
-const RequestsScreen = () => {
+const JobsScreen = () => {
     const [serviceData, setServiceData] = useState(null);
     const [city, setCity] = useState("San Francisco");
     const [location, setLocation] = useState(null);
@@ -143,7 +143,7 @@ const RequestsScreen = () => {
 
     return (
         <Screen style={tailwind`bg-white flex-1`}>
-            <ScreenHeader screenName="Requests"/>
+            <ScreenHeader screenName="Jobs"/>
             <SearchBar
                 setCity={setCity}
                 city={city}
@@ -215,7 +215,7 @@ const RequestsScreen = () => {
             <ScrollView style={tailwind`flex-1`} showsVerticalScrollIndicator={false}>
                 {loading && <ActivityIndicator size="large" color={colors.primary} style={tailwind`mt-2 mb-6`}/>}
                 {serviceData === null && !loading ?
-                    <Text style={tailwind`text-center text-gray-500 mt-2`}>No requests found</Text>
+                    <Text style={tailwind`text-center text-gray-500 mt-2`}>No jobs found</Text>
                     :
                     <ServiceItem serviceData={serviceData} userLocation={location}/>}
             </ScrollView>
@@ -245,4 +245,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default RequestsScreen;
+export default JobsScreen;
