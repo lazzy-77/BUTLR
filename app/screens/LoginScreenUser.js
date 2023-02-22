@@ -7,7 +7,7 @@ import colors from "../configs/colors";
 import * as yup from "yup";
 import AppFormFields from "../components/forms/AppFormFields";
 import AppSubmitButton from "../components/forms/AppSubmitButton";
-import { auth } from "../configs/firebase";
+import { auth, signInWithEmailAndPassword } from "../configs/firebase";
 import tailwind from 'tailwind-react-native-classnames';
 
 const loginValidationSchema = yup.object().shape({
@@ -24,8 +24,7 @@ const loginValidationSchema = yup.object().shape({
 function LoginScreenUser({ navigation }) {
 
     const LoginUser = ({ email, password }) => {
-        auth
-            .signInWithEmailAndPassword(email, password)
+        signInWithEmailAndPassword(auth, email, password)
             .catch((error) => {
                 if (error.code === "auth/invalid-password") {
                     Alert.alert("Error", "Invalid password!")

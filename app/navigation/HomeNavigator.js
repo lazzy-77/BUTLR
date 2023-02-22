@@ -4,6 +4,7 @@ import DetailsScreen from '../screens/DetailsScreen';
 import SuccessScreen from '../screens/SuccessScreen';
 import CheckoutScreen from '../screens/CheckoutScreen';
 import MainTabNavigator from './MainTabNavigator';
+import CreateJobScreen from "../screens/CreateJobScreen";
 
 const Stack = createStackNavigator();
 
@@ -14,8 +15,9 @@ export default function HomeNavigator() {
                 headerShown: false
             }}
         >
-            <Stack.Screen name="HomeScreen" component={MainTabNavigator} />
+            <Stack.Screen name="JobsScreen" component={MainTabNavigator} />
             <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
+            <Stack.Screen name="CreateJobScreen" component={CreateJobScreen} />
             <Stack.Screen name="SuccessScreen" component={SuccessScreen} />
             <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
         </Stack.Navigator>

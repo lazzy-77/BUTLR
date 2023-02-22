@@ -1,64 +1,187 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Image, Text, TouchableOpacity, ScrollView } from 'react-native'
-import colors from '../configs/colors'
-import { AntDesign } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons'
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, View, Image, Text, TouchableOpacity, ScrollView} from 'react-native';
+import colors from '../configs/colors';
+import {AntDesign, MaterialCommunityIcons, Ionicons, Foundation, Entypo, Octicons} from '@expo/vector-icons';
 import tailwind from 'tailwind-react-native-classnames';
-import { Foundation } from '@expo/vector-icons';
-import { Entypo } from '@expo/vector-icons';
-import RestaurantMap from '../components/ServiceMap'
-import MenuItems from '../components/MenuItems'
-import ViewCart from '../components/ViewCart';
-import { selectTotalItems, selectTotalPrice } from '../redux/slices/basketSlice';
-import { useSelector } from 'react-redux';
+import ServiceMap from '../components/ServiceMap';
+import {getDistance} from "geolib";
+import {Video} from "expo-av";
+import {httpsCallable, functions, ref, storage, getDownloadURL} from "../configs/firebase";
 
-const DetailsScreen = ({ route, navigation }) => {
-    const [mapActive, setMapActive] = useState(false)
-    const { categories, coordinates, image_url, name, price, rating, review_count } = route?.params?.item
-    const totalPrice = useSelector(selectTotalPrice)
-    const getAllItems = useSelector(selectTotalItems)
+const DetailsScreen = ({route, navigation}) => {
+    const [jobUser, setJobUser] = useState(null);
+    const [profilePic, setProfilePic] = useState(null);
+    const [returnToPin, setReturnToPin] = useState(false);
+    const {name} = route?.params?.item;
+    const uid = route?.params?.item.createdBy;
+    const getUserByUid = httpsCallable(functions, 'getUserByUid');
+    const coordinates = {
+        latitude: route?.params?.item.location[0],
+        longitude: route?.params?.item.location[1]
+    }
+    const pointA = {
+        latitude: route?.params?.userLocation.coords.latitude,
+        longitude: route?.params?.userLocation.coords.longitude
+    }
+    const job = route?.params?.item;
+    const pointB = {
+        latitude: job.location[0],
+        longitude: job.location[1]
+    }
+
+    useEffect(() => {
+        getJobUser().then(() => {
+            //Profile pic is set
+        });
+    }, [])
+
+    useEffect(() => {
+        getProfilePic().then(() => {
+            //Profile pic is set
+        }).catch(e => {
+            console.log(e);
+        });
+    }, [jobUser])
+
+    const getProfilePic = async () => {
+        const fileRef = ref(storage, 'users/' + jobUser.uid + '/profilePic');
+        const url = getDownloadURL(fileRef);
+        await url.then(r => {
+            if (url["_z"] !== undefined) {
+                setProfilePic({uri: url["_z"]});
+            }
+        }).catch(e => {
+            console.log(e);
+        })
+    }
+
+    const getDisplayDistance = (distance) => {
+        if (distance < 1000) {
+            return `${distance}m`
+        } else {
+            return `${(distance / 1000).toFixed(0)}km`
+        }
+    }
+
+    const getJobUser = async () => {
+        const response = await getUserByUid({uid});
+        await response;
+        setJobUser(response.data);
+    }
+
+    const distance = getDistance(pointA, pointB);
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={tailwind`absolute top-9 left-4 z-30 w-9 h-9 rounded-full bg-white justify-center items-center shadow`} onPress={() => navigation.goBack()}>
-                <Ionicons name="arrow-back" size={18} color={colors.black} />
+            <TouchableOpacity
+                style={tailwind`absolute top-9 left-4 z-30 w-9 h-9 rounded-full bg-white justify-center items-center shadow`}
+                onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={18} color={colors.black}/>
             </TouchableOpacity>
             <View style={styles.mapImageWrapper}>
-                {mapActive ? (
-                    <RestaurantMap coordinates={coordinates} title={name} />
-                ) : (
-                    <Image source={{ uri: image_url }} style={styles.image} />
-                )}
+                <View>
+                    <ServiceMap coordinates={coordinates} title={name} returnToPin={returnToPin}
+                                setReturnToPin={setReturnToPin}/>
+                </View>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} style={tailwind`z-20`}>
-                <View style={styles.content}>
+            <View style={styles.content}>
+                <View style={tailwind`p-6`} showsVerticalScrollIndicator={false}>
                     <View style={styles.header}>
-                        <Text style={styles.title}>{name}</Text>
-                        <TouchableOpacity onPress={() => setMapActive(e => !e)}>
-                            <Entypo name="location" size={24} color={`${mapActive ? colors.primary : '#000'}`} />
+                        <Text style={styles.title}>{job.title}</Text>
+                        <TouchableOpacity onPress={() => setReturnToPin(true)}>
+                            <Entypo name="location" size={24} color={'#000'}/>
                         </TouchableOpacity>
                     </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <View style={tailwind`flex flex-row justify-between items-start`}>
                         <View style={styles.info}>
                             <View style={styles.infoItem}>
-                                <AntDesign name="star" size={12} color="#FFC238" />
-                                <Text style={styles.infoText}>{rating} • ({review_count})</Text>
+                                <MaterialCommunityIcons name="clock-time-four" size={14} color="#06C167"/>
+                                <Text style={styles.infoText}>• {job.duration}</Text>
                             </View>
                             <View style={styles.infoItem}>
-                                <AntDesign name="clockcircleo" size={10} color={colors.black} />
-                                <Text style={styles.infoText}>20-30 min</Text>
+                                <Foundation name="dollar" size={16} color={colors.primary}/>
+                                <Text style={styles.infoText}>• {job.pay}</Text>
                             </View>
                             <View style={styles.infoItem}>
-                                <Foundation name="dollar" size={16} color={colors.primary} />
-                                <Text style={styles.infoText}>• {price}</Text>
+                                <MaterialCommunityIcons name="compass" size={16} color={colors.slate}/>
+                                <Text style={styles.infoText}>• {getDisplayDistance(distance)}</Text>
                             </View>
                         </View>
                     </View>
-                    <MenuItems resName={name} resImage={image_url} />
+                    <View style={tailwind`flex flex-row justify-between items-start mt-1`}>
+                        <View style={styles.infoItem}>
+                            <Octicons name="apps" size={16} color="#38bdf8"/>
+                            <Text style={styles.infoText}>• {job.categoryDisplayName}</Text>
+                        </View>
+                    </View>
+                    <View style={tailwind`rounded-md mt-1 flex flex-row items-center max-h-12 h-12`}>
+                        {
+                            profilePic !== null && jobUser !== null ? (
+                                <Image
+                                    style={tailwind`w-10 h-10 mr-1 rounded-full`}
+                                    source={profilePic}
+                                    key={jobUser.photoURL}
+                                />
+                            ) : (
+                                <AntDesign name="user" size={24} color={colors.primary}
+                                           style={tailwind`w-10 h-10 mr-1 rounded-full`}/>
+                            )
+                        }
+                        {
+                            jobUser !== null ? (
+                                <Text style={tailwind`text-lg h-10 mt-2 font-semibold`}>{jobUser.displayName}</Text>
+                            ) : (
+                                <Text style={tailwind`text-lg h-10 mt-2 font-semibold`}>User Name</Text>
+                            )
+
+                        }
+                    </View>
+                    <ScrollView style={tailwind`bg-gray-50 rounded-md mt-1 h-36 max-h-36`}>
+                        <Text style={tailwind`text-lg m-1 font-medium`}>Description</Text>
+                        <Text style={tailwind`text-gray-700 text-sm m-1`}>{job.description}</Text>
+                    </ScrollView>
+                    {job.media.length > 0 && (
+                        <View style={tailwind`bg-gray-50 rounded-md mt-1 h-52 max-h-52`}>
+                            <Text style={tailwind`text-lg m-1 font-medium`}>Pictures and Videos ({job.media.length})</Text>
+                            <ScrollView horizontal={true} style={tailwind`flex flex-row`}>
+                                {job.media.map((media, index) => {
+                                    if (media.type === 'video') {
+                                        return (
+                                            <Video
+                                                source={{uri: media.uri}}
+                                                key={media.uri}
+                                                resizeMode="cover"
+                                                useNativeControls
+                                                shouldPlay
+                                                isLooping
+                                                style={tailwind`w-40 h-40 m-1 rounded-md`}
+                                            />
+                                        )
+                                    } else {
+                                        return (
+                                            <Image key={index} style={tailwind`w-40 h-40 m-1 rounded-md`}
+                                                   source={{uri: media.uri}}/>
+                                        )
+                                    }
+                                })}
+                            </ScrollView>
+                        </View>
+                    )}
+                    <View style={tailwind`flex flex-row mt-2 items-center h-20 justify-between`}>
+                        <TouchableOpacity style={styles.button}>
+                            <Text style={tailwind`text-xl font-bold text-white`}>
+                                Apply
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button}>
+                            <Text style={tailwind`text-xl font-bold text-white`}>
+                                Enquire
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </ScrollView>
-            <ViewCart total={totalPrice} count={getAllItems.length} />
+            </View>
         </View>
     );
 }
@@ -70,8 +193,8 @@ const styles = StyleSheet.create({
         flex: 1
     },
     mapImageWrapper: {
-        position: 'absolute',
         width: '100%',
+        zIndex: 10,
     },
     image: {
         width: '100%',
@@ -79,15 +202,15 @@ const styles = StyleSheet.create({
         height: 260
     },
     content: {
-        position: 'relative',
         zIndex: 20,
+        position: 'absolute',
+        top: 0,
+        left: 0,
         backgroundColor: colors.white,
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
-        paddingVertical: 25,
-        paddingHorizontal: 25,
         marginTop: 220,
-        paddingBottom: 10
+        height: '100%',
     },
     header: {
         flexDirection: 'row',
@@ -122,6 +245,17 @@ const styles = StyleSheet.create({
         marginLeft: 4,
         fontSize: 12
     },
+    button: {
+        backgroundColor: colors.primary,
+        borderRadius: 5,
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '49%',
+        height: 50
+    }
 })
 
 export default DetailsScreen;

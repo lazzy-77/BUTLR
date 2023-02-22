@@ -1,18 +1,15 @@
-import React, {useState} from 'react'
 import {useFormikContext} from 'formik'
-import {AntDesign} from '@expo/vector-icons';
 import AppErrorMessage from './AppErrorMessage'
-import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native'
+import {StyleSheet, Text, TextInput, View} from 'react-native'
 import colors from '../../configs/colors'
 
-export default function AppFormFields({
-                                          name,
-                                          password = false,
-                                          title,
-                                          style,
-                                          ...otherProps
-                                      }) {
-    const [showPassword, setShowPassword] = useState(password)
+export default function AppFormDescriptionFields({
+                                                     name,
+                                                     title,
+                                                     style,
+                                                     multiline,
+                                                     ...otherProps
+                                                 }) {
     const {setFieldTouched, handleChange, errors, touched, values} = useFormikContext()
 
     return (
@@ -21,23 +18,15 @@ export default function AppFormFields({
             <TextInput
                 onBlur={() => setFieldTouched(name)}
                 onChangeText={handleChange(name)}
+                multiline={true}
                 {...otherProps}
                 style={[
                     styles.input,
                     (touched[name] && errors[name]) && {borderColor: colors.danger},
+                    style
                 ]}
-                secureTextEntry={showPassword}
                 value={values[name]}
             />
-            {password && (
-                <TouchableOpacity style={styles.icon} onPress={() => setShowPassword(!showPassword)}>
-                    {showPassword ? (
-                        <AntDesign name="eye" size={24} color={colors.black}/>
-                    ) : (
-                        <AntDesign name="eyeo" size={24} color={colors.black}/>
-                    )}
-                </TouchableOpacity>
-            )}
             <AppErrorMessage visible={touched[name]} error={errors[name]}/>
         </View>
     )

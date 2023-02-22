@@ -1,12 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import tailwind from 'tailwind-react-native-classnames';
-import { GOOGLE_MAP_APIKEY} from "@env"
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
-import { Ionicons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import {GOOGLE_MAP_APIKEY} from "@env"
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
+import {Ionicons, FontAwesome5} from '@expo/vector-icons';
 
-const SearchBar = ({ setCity, city }) => {
+const SearchBar = ({setCity, city, handleUseMyLocation, location, setLocation}) => {
 
     return (
         <View style={tailwind`flex-row mt-3 px-4 pb-3 border-b border-gray-100 border-b-2`}>
@@ -14,7 +13,17 @@ const SearchBar = ({ setCity, city }) => {
                 placeholder={city || "Search"}
                 nearbyPlacesAPI="GooglePlacesSearch"
                 debounce={400}
-                onPress={data => setCity(data.structured_formatting.main_text)}
+                onPress={(data, details= null) => {
+                    setCity(data.structured_formatting.main_text);
+                    const location = {
+                        coords: {
+                            latitude: details.geometry.location.lat,
+                            longitude: details.geometry.location.lng
+                        }
+                    }
+                    setLocation(location);
+                    console.log(data, "\n", "\n", "\n", details.geometry.location);
+                }}
                 minLength={2}
                 fetchDetails={true}
                 returnKeyType={"search"}
@@ -44,13 +53,15 @@ const SearchBar = ({ setCity, city }) => {
                 enablePoweredByContainer={false}
                 renderLeftButton={() => (
                     <View style={tailwind`self-center ml-3`}>
-                        <Ionicons name="ios-location-sharp" size={24} color="#CCCCCC" />
+                        <Ionicons name="ios-location-sharp" size={24} color="#CCCCCC"/>
                     </View>
                 )}
                 renderRightButton={() => (
-                    <TouchableOpacity style={tailwind`self-center ml-3 flex-row items-center bg-white py-2 px-3 rounded-full mr-3`}>
-                        <MaterialCommunityIcons name="clock-time-four" size={13} color="black" />
-                        <Text style={tailwind`ml-1`}>Search</Text>
+                    <TouchableOpacity
+                        style={tailwind`self-center ml-3 flex-row items-center bg-white py-2 px-3 rounded-full mr-3`}
+                        onPress={handleUseMyLocation}>
+                        <FontAwesome5 name="search-location" size={13} color="black"/>
+                        <Text style={tailwind`text-xs ml-1`}>Use my location</Text>
                     </TouchableOpacity>
                 )}
             />

@@ -1,51 +1,81 @@
-import React, { useEffect } from 'react'
-import { Image, StyleSheet, View, TouchableWithoutFeedback, Alert } from 'react-native'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
+import React, {useEffect} from 'react'
+import {Image, StyleSheet, View, TouchableWithoutFeedback, Alert, Text} from 'react-native'
+import {MaterialCommunityIcons} from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker'
 import colors from '../../configs/colors'
 
-function ImageInput({imageUri, onChangeImage}) {
-
+//Props list:
+//onSelectImage: function passed in and to be called when image is selected
+//PicturesOnly: boolean to specify if only pictures should be selected
+//multipleFiles: boolean to specify if multiple files should be selected
+const ImageInput = (props) => {
     const requestPermissions = async () => {
-        const { status  } = ImagePicker.requestMediaLibraryPermissionsAsync();
+        const {status} = await Promise.all([
+            ImagePicker.requestMediaLibraryPermissionsAsync(),
+            ImagePicker.requestCameraPermissionsAsync()
+        ])
         if (status === 'denied') {
-          alert('Sorry, we need camera roll permissions to make this work!');
+            alert('Sorry, we need camera roll and camera permissions to make this work!');
         }
     }
 
     useEffect(() => {
-        requestPermissions()
+        requestPermissions().then(r => {
+            //Permission granted
+        })
     }, [])
 
-    const selectImage = async () =>{
+    const selectImage = async () => {
         try {
-          const result = await ImagePicker.launchImageLibraryAsync({
-              mediaTypes: ImagePicker.MediaTypeOptions.Images,
-              quality: 0.5,
-              allowsEditing: true,
-              aspect: [4, 3],
-          })
-          if(!result.cancelled) onChangeImage(result.uri)
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: props.picturesOnly ? ImagePicker.MediaTypeOptions.Images : ImagePicker.MediaTypeOptions.All,
+                quality: 0.5,
+                allowsMultipleSelection: props.multipleFiles === true,
+            })
+            if (!result.canceled && props.multipleFiles) {
+                props.onSelectImage(result.assets)
+                return;
+            }
+            if (!result.canceled) props.onSelectImage(result.assets[0].uri)
         } catch (error) {
-          console.log("Error Reading an image", error)
+            console.log("Error Reading an image", error)
         }
     }
 
+    const takePicture = async () => {
+        try {
+            const result = await ImagePicker.launchCameraAsync({
+                mediaTypes: props.picturesOnly ? ImagePicker.MediaTypeOptions.Images : ImagePicker.MediaTypeOptions.All,
+                quality: 0.5,
+            });
+            if (!result.canceled && props.multipleFiles) {
+                props.onSelectImage(result.assets)
+                return;
+            }
+            if (!result.canceled) props.onSelectImage(result.assets[0].uri);
+        } catch (error) {
+            console.log("Error taking a picture", error);
+        }
+    };
+
+
     const handlePress = () => {
-        if(!imageUri) selectImage();
-        else Alert.alert('Delete', 'Are you sure you want to delete this image?', [
-            {text: 'yes', onPress: () => onChangeImage(null)},
-            {text: 'no'}
-        ])
+        Alert.alert(
+            'Select Image',
+            'Where would you like to select the image from?',
+            [
+                {text: 'Take Picture', onPress: takePicture},
+                {text: 'Gallery', onPress: selectImage},
+                {text: 'Cancel', style: 'cancel'},
+            ],
+            {cancelable: true},
+        );
     }
 
     return (
         <TouchableWithoutFeedback onPress={handlePress}>
             <View style={styles.container}>
-                {!imageUri ? (<MaterialCommunityIcons name="camera" color={colors.medium} size={35}/>) : 
-                (
-                    <Image style={styles.image} source={{uri: imageUri}}/>
-                )}
+                <MaterialCommunityIcons name="camera" color={colors.medium} size={35}/>
             </View>
         </TouchableWithoutFeedback>
     )
@@ -57,8 +87,8 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         justifyContent: 'center',
         alignItems: 'center',
-        height: 100,
-        width: 100,
+        height: 50,
+        width: 50,
         overflow: 'hidden'
     },
     image: {
