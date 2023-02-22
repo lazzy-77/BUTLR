@@ -37,11 +37,10 @@ const RequestsScreen = () => {
     //Get service data when location changes
     useEffect(() => {
         setServiceData(null);
-        getServiceData().then(r => {
+        getServiceData(radius, selectedCategories).then(r => {
             //Service data loaded
         })
     }, [location])
-
 
     //Get location permission
     useEffect(() => {
@@ -117,7 +116,7 @@ const RequestsScreen = () => {
             const longitude = location.coords.longitude;
 
             // Search radius in meters
-            const radius = 50000;
+            const radius = radius ? radius : 50000;
 
             // Make a GET request to the Google Places API
             fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${radius}&type=town&key=${GOOGLE_MAP_APIKEY}`)
