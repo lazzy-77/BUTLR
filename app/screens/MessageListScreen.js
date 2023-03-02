@@ -1,6 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Text, FlatList, TouchableOpacity} from 'react-native';
-import {collection, query, where, orderBy, onSnapshot, db, auth} from '../configs/firebase';
+import {StyleSheet, View, Text, FlatList, TouchableOpacity, Image} from 'react-native';
+import {
+    collection,
+    query,
+    where,
+    orderBy,
+    onSnapshot,
+    db,
+    auth,
+} from '../configs/firebase';
 import ScreenHeader from "../components/ScreenHeader";
 import Screen from '../components/Screen'
 import tailwind from "tailwind-react-native-classnames";
@@ -69,14 +77,25 @@ const MessageListScreen = ({navigation}) => {
                 data={conversations}
                 keyExtractor={item => item.user.uid}
                 renderItem={({item}) => (
-                    <TouchableOpacity onPress={() => handlePress(item.lastMessage.uidToName)}>
+                    <TouchableOpacity style={tailwind`border-b-2 border-gray-100 flex flex-row`}
+                                      onPress={() => handlePress(item.lastMessage.uidToName)}>
+                        <View style={tailwind`w-12 h-12 rounded-full overflow-hidden`}>
+                            <Image
+                                style={tailwind`w-full h-full`}
+                                source={{uri: item.lastMessage.uidToAvatar}}
+                            />
+                        </View>
                         <View style={styles.conversation}>
-                            <View style={tailwind`flex flex-row items-center justify-between`}>
+                            <View style={tailwind`flex flex-row items-center justify-between w-80`}>
                                 <Text style={styles.username}>
                                     {getOtherUserName(item.lastMessage.uidToName)}
                                 </Text>
                                 <Text>
-                                    {item.lastMessage.createdAt.toDate().toLocaleTimeString([], {hour: 'numeric', minute: 'numeric', hour12: true})}
+                                    {item.lastMessage.createdAt.toDate().toLocaleTimeString([], {
+                                        hour: 'numeric',
+                                        minute: 'numeric',
+                                        hour12: true
+                                    })}
                                 </Text>
                             </View>
                             {item.lastMessage && (
@@ -103,8 +122,6 @@ const styles = StyleSheet.create({
     conversation: {
         paddingHorizontal: 10,
         paddingVertical: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
     },
     username: {
         fontSize: 18,
