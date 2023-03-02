@@ -1,10 +1,10 @@
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 import {Feather, Ionicons} from '@expo/vector-icons';
 import colors from '../configs/colors';
 import JobsScreen from '../screens/JobsScreen'
 import TabCartButton from '../components/TabCartButton'
-import CartScreen from '../screens/CartScreen';
+import MessageListScreen from "../screens/MessageListScreen";
 import AccountScreen from '../screens/AccountScreen';
 
 const Tab = createBottomTabNavigator()
@@ -25,19 +25,25 @@ const MainTabNavigator = () => {
             }}
         >
             <Tab.Screen name="Jobs" component={JobsScreen}
-                options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="create" color={color} size={size} />
-                    )
-                }}
+                        options={{
+                            tabBarIcon: ({color, size}) => (
+                                <Ionicons name="create" color={color} size={size}/>
+                            )
+                        }}
             />
-
+            <Tab.Screen name="Messages" component={MessageListScreen}
+                        options={{
+                            tabBarIcon: ({color, size}) => (
+                                <Feather name="message-square" color={color} size={size}/>
+                            ),
+                        }}
+            />
             <Tab.Screen name="Account" component={AccountScreen}
-                options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <Feather name="user" color={color} size={size} />
-                    )
-                }}
+                        options={{
+                            tabBarIcon: ({color, size}) => (
+                                <Feather name="user" color={color} size={size}/>
+                            )
+                        }}
             />
         </Tab.Navigator>
     );
