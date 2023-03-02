@@ -76,7 +76,7 @@ const MessageListScreen = ({navigation}) => {
                                     {getOtherUserName(item.lastMessage.uidToName)}
                                 </Text>
                                 <Text>
-                                    {item.lastMessage.createdAt.toDate().toLocaleTimeString()}
+                                    {item.lastMessage.createdAt.toDate().toLocaleTimeString([], {hour: 'numeric', minute: 'numeric', hour12: true})}
                                 </Text>
                             </View>
                             {item.lastMessage && (
