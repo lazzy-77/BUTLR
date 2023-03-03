@@ -12,6 +12,7 @@ import {
 import ScreenHeader from "../components/ScreenHeader";
 import Screen from '../components/Screen'
 import tailwind from "tailwind-react-native-classnames";
+import Conversation from "../components/Conversation";
 
 const MessageListScreen = ({navigation}) => {
     const [conversations, setConversations] = useState([]);
@@ -77,34 +78,10 @@ const MessageListScreen = ({navigation}) => {
                 data={conversations}
                 keyExtractor={item => item.user.uid}
                 renderItem={({item}) => (
-                    <TouchableOpacity style={tailwind`border-b-2 border-gray-100 flex flex-row`}
-                                      onPress={() => handlePress(item.lastMessage.uidToName)}>
-                        <View style={tailwind`w-12 h-12 rounded-full overflow-hidden`}>
-                            <Image
-                                style={tailwind`w-full h-full`}
-                                source={{uri: item.lastMessage.uidToAvatar}}
-                            />
-                        </View>
-                        <View style={styles.conversation}>
-                            <View style={tailwind`flex flex-row items-center justify-between w-80`}>
-                                <Text style={styles.username}>
-                                    {getOtherUserName(item.lastMessage.uidToName)}
-                                </Text>
-                                <Text>
-                                    {item.lastMessage.createdAt.toDate().toLocaleTimeString([], {
-                                        hour: 'numeric',
-                                        minute: 'numeric',
-                                        hour12: true
-                                    })}
-                                </Text>
-                            </View>
-                            {item.lastMessage && (
-                                <Text numberOfLines={1} style={styles.message}>
-                                    {item.lastMessage.text}
-                                </Text>
-                            )}
-                        </View>
-                    </TouchableOpacity>
+                    <Conversation onPress={() => handlePress(item.lastMessage.uidToName)}
+                                  item={item}
+                                  otherUserName={getOtherUserName(item.lastMessage.uidToName)
+                    }/>
                 )}
             />
             <Text onPress={() => console.log(JSON.stringify(conversations[0]))}>
