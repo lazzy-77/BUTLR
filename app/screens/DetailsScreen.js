@@ -15,8 +15,9 @@ const DetailsScreen = ({route, navigation}) => {
     const [returnToPin, setReturnToPin] = useState(false);
     const [loading, setLoading] = useState(false);
     const {name} = route?.params?.item;
-    const uid = route?.params?.item.createdBy;
+    const otherUserUid = route?.params?.item.createdBy;
     const getUserByUid = httpsCallable(functions, 'getUserByUid');
+
     const coordinates = {
         latitude: route?.params?.item.location[0],
         longitude: route?.params?.item.location[1]
@@ -67,7 +68,7 @@ const DetailsScreen = ({route, navigation}) => {
     }
 
     const getOtherUser = async () => {
-        const response = await getUserByUid({uid});
+        const response = await getUserByUid({uid: otherUserUid});
         await response;
         setOtherUser(response.data);
     }
