@@ -4,7 +4,7 @@ import tailwind from 'tailwind-react-native-classnames';
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/core';
 
-const ScreenHeader = ({screenName}) => {
+const ScreenHeader = ({screenName, headerButton = true}) => {
 
     const navigation = useNavigation();
 
@@ -16,7 +16,7 @@ const ScreenHeader = ({screenName}) => {
         <View style={tailwind`w-full`}>
             <View style={tailwind`flex-row mt-3 justify-between`}>
                 <Title style={tailwind`ml-1`} text={screenName}/>
-                <CreateJobButton style={tailwind`mr-1`} text="BUTLRs" onPress={handlePress}/>
+                {headerButton && <CreateJobButton style={tailwind`mr-1`} onPress={handlePress}/>}
             </View>
         </View>
     );
