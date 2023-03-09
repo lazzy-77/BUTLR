@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 import {GOOGLE_MAP_APIKEY} from "@env"
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
 import {Ionicons, FontAwesome5} from '@expo/vector-icons';

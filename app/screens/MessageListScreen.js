@@ -11,7 +11,7 @@ import {
 } from '../configs/firebase';
 import ScreenHeader from "../components/ScreenHeader";
 import Screen from '../components/Screen'
-import tailwind from "tailwind-react-native-classnames";
+import tailwind from "twrnc";
 import Conversation from "../components/Conversation";
 
 const MessageListScreen = ({navigation}) => {

@@ -9,7 +9,7 @@ import {Video} from "expo-av";
 import {auth, functions, getDownloadURL, httpsCallable, ref, storage} from "../configs/firebase";
 import MessageScreen from '../screens/MessageScreen';
 
-const DetailsScreen = ({route, navigation}) => {
+const PendingJobDetailsScreen = ({route, navigation}) => {
     const [otherUser, setOtherUser] = useState(null);
     const [profilePic, setProfilePic] = useState(null);
     const [returnToPin, setReturnToPin] = useState(false);
@@ -27,8 +27,8 @@ const DetailsScreen = ({route, navigation}) => {
         longitude: route?.params?.item.location[1]
     }
     const pointA = {
-        latitude: route?.params?.userLocation.coords.latitude,
-        longitude: route?.params?.userLocation.coords.longitude
+        latitude: route?.params?.userLocation.latitude,
+        longitude: route?.params?.userLocation.longitude
     }
     const job = route?.params?.item;
     const pointB = {
@@ -91,8 +91,7 @@ const DetailsScreen = ({route, navigation}) => {
                 setLoading(false);
                 setButtonText('Pending');
                 setButtonStyle(styles.button_pending);
-                refreshServiceData();
-                navigation.navigate("JobsScreen")
+                navigation.goBack();
                 alert('Request sent!')
             }).catch(e => {
                 alert(e);
@@ -119,8 +118,7 @@ const DetailsScreen = ({route, navigation}) => {
                                 setLoading(false);
                                 setButtonText('Apply');
                                 setButtonStyle(styles.button);
-                                refreshServiceData();
-                                navigation.navigate("JobsScreen")
+                                navigation.goBack();
                                 alert('Request cancelled!')
                             }).catch(e => {
                                 alert(e);
@@ -345,4 +343,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default DetailsScreen;
+export default PendingJobDetailsScreen;

@@ -15,7 +15,7 @@ import {
     storage,
     getDownloadURL
 } from '../configs/firebase';
-import tailwind from "tailwind-react-native-classnames";
+import tailwind from "twrnc";
 import Screen from "../components/Screen";
 import Constants from "expo-constants";
 import colors from "../configs/colors";

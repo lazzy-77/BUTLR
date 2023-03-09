@@ -8,7 +8,7 @@ import * as yup from "yup";
 import AppFormFields from "../components/forms/AppFormFields";
 import AppSubmitButton from "../components/forms/AppSubmitButton";
 import { auth, signInWithEmailAndPassword } from "../configs/firebase";
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 
 const loginValidationSchema = yup.object().shape({
     email: yup

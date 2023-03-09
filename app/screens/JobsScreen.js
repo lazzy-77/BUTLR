@@ -5,7 +5,7 @@ import Screen from '../components/Screen'
 import Categories from '../components/Categories'
 import SearchBar from '../components/SearchBar'
 import ServiceItem from "../components/ServiceItem";
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 import colors from '../configs/colors'
 import {functions, httpsCallable} from '../configs/firebase';
 import {GOOGLE_MAP_APIKEY} from "@env"
@@ -68,6 +68,14 @@ const JobsScreen = () => {
         setSelectedCategories([]);
         setRadius(50000);
         getServiceData(50000, []).then(r => {
+            //Service data loaded
+        }).catch(e => {
+            console.log(e)
+        })
+    }
+
+    const refreshServiceData = () => {
+        getServiceData(radius, selectedCategories).then(r => {
             //Service data loaded
         }).catch(e => {
             console.log(e)
@@ -217,7 +225,7 @@ const JobsScreen = () => {
                 {serviceData === null && !loading ?
                     <Text style={tailwind`text-center text-gray-500 mt-2`}>No jobs found</Text>
                     :
-                    <ServiceItem serviceData={serviceData} userLocation={location}/>}
+                    <ServiceItem serviceData={serviceData} userLocation={location} refreshServiceData={refreshServiceData}/>}
             </ScrollView>
         </Screen>
     );

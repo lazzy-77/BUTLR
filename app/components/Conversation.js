@@ -1,5 +1,5 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import tailwind from "tailwind-react-native-classnames";
+import tailwind from "twrnc";
 import React, {useEffect} from "react";
 import {auth, getDownloadURL, ref, storage} from "../configs/firebase";
 import {AntDesign} from "@expo/vector-icons";

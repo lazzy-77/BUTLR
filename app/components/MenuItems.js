@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Image } from 'react-native';
 import { jobs } from '../data/jobsData'
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCartItems, selectTotalPrice, updateBasket } from '../redux/slices/basketSlice';
 import BouncyCheckbox from "react-native-bouncy-checkbox";

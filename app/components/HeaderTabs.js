@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 
 const HeaderTabs = ({ activeTab, setActiveTab }) => {
 
