@@ -6,8 +6,20 @@ import tailwind from 'twrnc';
 import ServiceMap from '../components/ServiceMap';
 import {getDistance} from "geolib";
 import {Video} from "expo-av";
-import {auth, functions, getDownloadURL, httpsCallable, ref, storage} from "../configs/firebase";
-import MessageScreen from '../screens/MessageScreen';
+import {
+    addDoc,
+    auth,
+    collection,
+    db,
+    functions, getDocs,
+    getDownloadURL,
+    httpsCallable,
+    query,
+    ref,
+    storage,
+    where
+} from "../configs/firebase";
+import {serverTimestamp} from "firebase/firestore";
 
 const DetailsScreen = ({route, navigation}) => {
     const [otherUser, setOtherUser] = useState(null);
@@ -133,6 +145,29 @@ const DetailsScreen = ({route, navigation}) => {
         }
     };
 
+    const handleEnquire = async () => {
+        setLoading(true);
+        const createNewConversation = httpsCallable(functions, "createNewConversation");
+        const currentUser = auth.currentUser;
+        const otherUserId = route.params?.item.createdBy;
+        const data = {
+            userId1: currentUser.uid,
+            userId2: otherUserId,
+        };
+        await createNewConversation(data)
+            .then((result) => {
+                setLoading(false);
+                const conversationId = result.data.conversationId;
+                navigation.navigate("MessageScreen", {
+                    conversationId: conversationId,
+                });
+            })
+            .catch((error) => {
+                setLoading(false);
+                console.log(error);
+            });
+    };
+
     const distance = getDistance(pointA, pointB);
 
     return (
@@ -245,11 +280,7 @@ const DetailsScreen = ({route, navigation}) => {
                                         {buttonText}
                                     </Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.button} onPress={() => {
-                                    navigation.navigate('MessageScreen', {
-                                        otherUser: otherUser
-                                    })
-                                }}>
+                                <TouchableOpacity style={styles.button} onPress={() => handleEnquire()}>
                                     <Text style={tailwind`text-xl font-bold text-white`}>
                                         Enquire
                                     </Text>
