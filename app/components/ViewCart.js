@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/core';
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 
 const ViewCart = ({ total, count }) => {
     const navigation = useNavigation()

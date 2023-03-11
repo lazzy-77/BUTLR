@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import colors from '../configs/colors';
 import { fetchPublishableKey } from '../utils/helpers';
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 
 const PaymentScreen = ({ children }) => {
 

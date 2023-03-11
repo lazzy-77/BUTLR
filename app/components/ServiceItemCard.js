@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
-import tailwind from 'tailwind-react-native-classnames';
-import {Foundation, MaterialCommunityIcons} from '@expo/vector-icons';
+import tailwind from 'twrnc';
+import {AntDesign, Foundation, MaterialCommunityIcons} from '@expo/vector-icons';
 import {getDistance} from "geolib";
 import colors from '../configs/colors'
 import {Video} from "expo-av";
@@ -34,10 +34,10 @@ const ServiceItemCard = ({item, onPress, userLocation}) => {
         }
     }
 
-    return (
-        <TouchableOpacity style={tailwind`mx-4 mb-4 max-h-60`} onPress={onPress}>
-            <View style={tailwind`flex flex-row`}>
-                {item.media[0].type === 'video' ? (
+    const handleMedia = () => {
+        if (item.media && item.media.length > 0) {
+            if (item.media[0].type === 'video') {
+                return (
                     <Video
                         source={{uri: item.media[0].uri}}
                         key={item.media[0].uri}
@@ -47,12 +47,34 @@ const ServiceItemCard = ({item, onPress, userLocation}) => {
                         isLooping
                         style={tailwind`w-1/2 h-48 rounded-lg`}
                     />
-                ) : (
+                )
+            } else {
+                return (
                     <Image
                         source={{uri: item.media[0].uri ? item.media[0].uri : null}}
                         style={tailwind`w-1/2 h-48 rounded-lg`}
                     />
-                )}
+                )
+            }
+        } else {
+            return (
+                <View
+                    source={defaultProfilePic}
+                    style={tailwind`w-1/2 h-48 rounded-lg flex justify-center items-center bg-gray-50`}
+                >
+                    <AntDesign name="picture" size={24} color="black" />
+                    <Text>
+                        No pictures or videos
+                    </Text>
+                </View>
+            )
+        }
+    }
+
+    return (
+        <TouchableOpacity style={tailwind`mx-4 mb-4 max-h-60`} onPress={onPress}>
+            <View style={tailwind`flex flex-row`}>
+                {handleMedia()}
                 <View style={tailwind`w-1/2 ml-1`}>
                     <View style={tailwind`bg-gray-50 rounded-md h-14 max-h-14 flex justify-center`}>
                         <Text

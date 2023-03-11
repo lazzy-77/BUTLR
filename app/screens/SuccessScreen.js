@@ -4,7 +4,7 @@ import AppButton from '../components/AppButton'
 import Screen from '../components/Screen'
 import colors from '../configs/colors'
 import { useNavigation } from '@react-navigation/native';
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 
 function SuccessScreen() {
     const navigation = useNavigation()

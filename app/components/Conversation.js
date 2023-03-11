@@ -1,23 +1,39 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import tailwind from "tailwind-react-native-classnames";
-import React, {useEffect} from "react";
-import {auth, getDownloadURL, ref, storage} from "../configs/firebase";
-import {AntDesign} from "@expo/vector-icons";
+import {StyleSheet, Text, TouchableOpacity, View, Image, ActivityIndicator} from "react-native";
+import tailwind from "twrnc";
+import React, {useEffect, useState} from "react";
+import Constants from "expo-constants";
+import {getDownloadURL, ref, storage, auth, httpsCallable, functions} from "../configs/firebase";
 import colors from "../configs/colors";
 
 const Conversation = (props) => {
-    const [profilePic, setProfilePic] = React.useState(null);
+    const [profilePic, setProfilePic] = useState(null);
+    const otherUserUid = props.item.participants.filter(participant => participant !== auth.currentUser.uid)[0];
+    const getUserByUid = httpsCallable(functions, 'getUserByUid');
+    const [userName, setUserName] = useState("Name");
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        getProfilePic(props.item.lastMessage.uidToName).then(r => {
-            //profilePic is set
-        }).catch(e => {
-            console.log(e);
-        });
+        displayUser().catch((error) => {
+                console.error(error);
+            });
     }, []);
 
+    const displayUser = async () => {
+        setLoading(true)
+        await getProfilePic(otherUserUid)
+            .catch(e => {
+                console.log(e);
+            })
+        await getUserByUid({uid: otherUserUid}).then(r => {
+            setUserName(r.data.displayName)
+        }).catch(e => {
+            console.log(e);
+        })
+        setLoading(false)
+    }
+
     const getProfilePic = async (data) => {
-        const fileRef = ref(storage, 'users/' + getOtherUserUid(data) + '/profilePic');
+        const fileRef = ref(storage, 'users/' + data + '/profilePic');
         const url = getDownloadURL(fileRef);
         await url.then(r => {
             if (url["_z"] !== undefined) {
@@ -28,49 +44,59 @@ const Conversation = (props) => {
         })
     }
 
-    const getOtherUserUid = (data) => {
-        const key = auth.currentUser.uid;
-        const [otherUserUid, ] = Object.entries(data).find(([k]) => k !== key);
-        return otherUserUid;
-    }
-
     return (
-        <TouchableOpacity style={tailwind`border-b-2 border-gray-100 flex flex-row items-center justify-between overflow-hidden p-1`}
-                          onPress={props.onPress}>
-            <View style={tailwind`w-12 h-12 rounded-full overflow-hidden flex items-center justify-center`}>
-                {profilePic ? <Image source={{uri: profilePic}} style={tailwind`w-10 h-10 mr-1 rounded-full`}/> :
-                    <AntDesign name="user" size={24} color={colors.primary}
-                               style={tailwind`w-10 h-10 mr-1 rounded-full`}/>}
-            </View>
-            <View style={tailwind`py-3 flex-shrink`}>
-                <View style={tailwind`flex flex-row items-center justify-between overflow-hidden mr-1`}>
-                    <Text style={tailwind`text-lg font-bold mb-1`}>
-                        {props.otherUserName}
-                    </Text>
-                    <Text style={tailwind`text-sm`}>
-                        {props.item.lastMessage.createdAt.toDate().toLocaleTimeString([], {
-                            hour: "numeric",
-                            minute: "numeric",
-                            hour12: true
-                        })}
-                    </Text>
-                </View>
-                {props.item.lastMessage && (
-                    <Text numberOfLines={1} style={styles.message}>
-                        {props.item.lastMessage.text}
-                    </Text>
-                )}
-            </View>
-        </TouchableOpacity>
+        <View>
+        {loading ?
+                (<View style={tailwind`flex flex-row w-full py-2 border-b-2 border-gray-200 `}>
+                    <ActivityIndicator size="large" color={colors.primary} />
+                </View>)
+                :
+                (<TouchableOpacity onPress={props.onPress}>
+                    <View style={tailwind`flex flex-row w-full py-2 border-b-2 border-gray-200`}>
+                        <View
+                            style={tailwind`rounded-full w-12 h-12 bg-gray-300 mr-2 flex justify-center items-center`}>
+                            {profilePic ?
+                                <Image source={{uri: profilePic}} style={tailwind`w-12 h-12 rounded-full`}/>
+                                :
+                                <Text style={tailwind`text-center text-2xl`}>
+                                    {userName.charAt(0)}
+                                </Text>
+                            }
+                        </View>
+                        <View style={tailwind`overflow-hidden min-w-72 max-w-72 min-h-14 max-h-14`}>
+                            <View>
+                                <Text style={styles.conversationTitle}>
+                                    {userName}
+                                </Text>
+                            </View>
+                            <Text numberOfLines={1}
+                                  style={styles.conversationLastMessage}>{props.item.lastMessage}</Text>
+                            <Text style={tailwind`text-right text-gray-400`}>
+                                {new Date(props.item.timestamp._seconds * 1000 + props.item.timestamp._nanoseconds / 1000000).toLocaleTimeString(
+                                    [], {
+                                        hour: "numeric",
+                                        minute: "numeric",
+                                        hour12: true
+                                    })}
+                            </Text>
+                        </View>
+                    </View>
+                </TouchableOpacity>)
+        }
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    message: {
-        fontSize: 16,
-        color: '#777',
+    container: {
+        paddingTop: Constants.statusBarHeight,
         flex: 1,
-        flexWrap: 'wrap',
+    },
+    conversationTitle: {
+        fontWeight: "bold",
+    },
+    conversationLastMessage: {
+        color: "#888",
     },
 });
 

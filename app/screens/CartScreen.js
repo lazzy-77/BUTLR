@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Modal } from 'react-native';
 import Screen from '../components/Screen'
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 import AppHead from '../components/AppHead';
 import AppButton from '../components/AppButton'
 import { selectTotalItems, selectTotalPrice } from '../redux/slices/basketSlice';

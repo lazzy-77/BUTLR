@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Text, Image, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 import { selectCartItems, updateBasket } from '../redux/slices/basketSlice';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import colors from '../configs/colors';

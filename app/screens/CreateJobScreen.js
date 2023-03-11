@@ -8,7 +8,7 @@ import Screen from "../components/Screen";
 import AppHead from "../components/AppHead";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import AppButton from "../components/AppButton";
-import tailwind from "tailwind-react-native-classnames";
+import tailwind from "twrnc";
 import {categoriesList, displayNameToCategoryMap, categoryToDisplayNameMap} from "../data/categoriesData";
 import {useNavigation} from "@react-navigation/core";
 import {httpsCallable, functions, storage, ref, uploadBytesResumable, getDownloadURL} from "../configs/firebase";

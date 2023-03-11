@@ -4,7 +4,7 @@ import ServiceItemCard from "./ServiceItemCard";
 import { useNavigation } from '@react-navigation/core';
 import {getDistance} from "geolib";
 
-const ServiceItem = ({ serviceData, userLocation }) => {
+const ServiceItem = ({ serviceData, userLocation, refreshServiceData }) => {
 
     if (!serviceData) {
         return null;
@@ -37,7 +37,8 @@ const ServiceItem = ({ serviceData, userLocation }) => {
     const handlePress = (item) => {
         navigation.navigate("DetailsScreen", {
             item: {...item},
-            userLocation: {...userLocation}
+            userLocation: {...userLocation},
+            refreshServiceData: refreshServiceData
         })
     }
 

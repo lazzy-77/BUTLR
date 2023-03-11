@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Image, Text } from 'react-native';
 import Screen from '../components/Screen';
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 
 const GroceryScreen = () => {
     return (

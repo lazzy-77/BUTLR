@@ -5,7 +5,7 @@ import PaymentScreen from '../components/PaymentScreen';
 import { STRIPE_API_URL } from '../configs/apiEndpoints';
 import colors from '../configs/colors';
 import PaymentButton from '../components/PaymentButton';
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 import AppHead from '../components/AppHead';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/core';

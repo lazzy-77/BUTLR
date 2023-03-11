@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {View, Image, Text, TouchableOpacity} from 'react-native';
 import Screen from '../components/Screen'
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 import AppHead from '../components/AppHead';
 import {useSelector} from 'react-redux';
 import {selectUser} from '../redux/slices/authSlice'

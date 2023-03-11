@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, ScrollView, Text, TouchableOpacity, Image, TextInput } from 'react-native';
 import Screen from '../components/Screen';
 import { meals } from '../data/mealsData'
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 import colors from '../configs/colors';
 import { Ionicons } from '@expo/vector-icons';
 

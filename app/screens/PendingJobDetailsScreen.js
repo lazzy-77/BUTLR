@@ -6,22 +6,10 @@ import tailwind from 'twrnc';
 import ServiceMap from '../components/ServiceMap';
 import {getDistance} from "geolib";
 import {Video} from "expo-av";
-import {
-    addDoc,
-    auth,
-    collection,
-    db,
-    functions, getDocs,
-    getDownloadURL,
-    httpsCallable,
-    query,
-    ref,
-    storage,
-    where
-} from "../configs/firebase";
-import {serverTimestamp} from "firebase/firestore";
+import {auth, functions, getDownloadURL, httpsCallable, ref, storage} from "../configs/firebase";
+import MessageScreen from '../screens/MessageScreen';
 
-const DetailsScreen = ({route, navigation}) => {
+const PendingJobDetailsScreen = ({route, navigation}) => {
     const [otherUser, setOtherUser] = useState(null);
     const [profilePic, setProfilePic] = useState(null);
     const [returnToPin, setReturnToPin] = useState(false);
@@ -39,8 +27,8 @@ const DetailsScreen = ({route, navigation}) => {
         longitude: route?.params?.item.location[1]
     }
     const pointA = {
-        latitude: route?.params?.userLocation.coords.latitude,
-        longitude: route?.params?.userLocation.coords.longitude
+        latitude: route?.params?.userLocation.latitude,
+        longitude: route?.params?.userLocation.longitude
     }
     const job = route?.params?.item;
     const pointB = {
@@ -103,8 +91,7 @@ const DetailsScreen = ({route, navigation}) => {
                 setLoading(false);
                 setButtonText('Pending');
                 setButtonStyle(styles.button_pending);
-                refreshServiceData();
-                navigation.navigate("JobsScreen")
+                navigation.goBack();
                 alert('Request sent!')
             }).catch(e => {
                 alert(e);
@@ -131,8 +118,7 @@ const DetailsScreen = ({route, navigation}) => {
                                 setLoading(false);
                                 setButtonText('Apply');
                                 setButtonStyle(styles.button);
-                                refreshServiceData();
-                                navigation.navigate("JobsScreen")
+                                navigation.goBack();
                                 alert('Request cancelled!')
                             }).catch(e => {
                                 alert(e);
@@ -143,29 +129,6 @@ const DetailsScreen = ({route, navigation}) => {
                 {cancelable: false}
             );
         }
-    };
-
-    const handleEnquire = async () => {
-        setLoading(true);
-        const createNewConversation = httpsCallable(functions, "createNewConversation");
-        const currentUser = auth.currentUser;
-        const otherUserId = route.params?.item.createdBy;
-        const data = {
-            userId1: currentUser.uid,
-            userId2: otherUserId,
-        };
-        await createNewConversation(data)
-            .then((result) => {
-                setLoading(false);
-                const conversationId = result.data.conversationId;
-                navigation.navigate("MessageScreen", {
-                    conversationId: conversationId,
-                });
-            })
-            .catch((error) => {
-                setLoading(false);
-                console.log(error);
-            });
     };
 
     const distance = getDistance(pointA, pointB);
@@ -280,7 +243,11 @@ const DetailsScreen = ({route, navigation}) => {
                                         {buttonText}
                                     </Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.button} onPress={() => handleEnquire()}>
+                                <TouchableOpacity style={styles.button} onPress={() => {
+                                    navigation.navigate('MessageScreen', {
+                                        otherUser: otherUser
+                                    })
+                                }}>
                                     <Text style={tailwind`text-xl font-bold text-white`}>
                                         Enquire
                                     </Text>
@@ -376,4 +343,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default DetailsScreen;
+export default PendingJobDetailsScreen;

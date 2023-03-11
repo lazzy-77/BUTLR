@@ -1,38 +1,48 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
-import {GiftedChat} from 'react-native-gifted-chat';
+import React, {useState, useEffect} from "react";
+import {StyleSheet, View, Text, FlatList, TextInput, TouchableOpacity, Image} from "react-native";
 import {
+    auth,
+    functions,
+    httpsCallable,
     db,
     collection,
-    doc,
     query,
     where,
-    onSnapshot,
-    addDoc,
     orderBy,
-    auth,
-    ref,
-    storage,
-    getDownloadURL
-} from '../configs/firebase';
-import tailwind from "tailwind-react-native-classnames";
-import Screen from "../components/Screen";
-import Constants from "expo-constants";
+    onSnapshot,
+    ref, storage, getDownloadURL
+} from "../configs/firebase";
+import {Ionicons, MaterialCommunityIcons} from "@expo/vector-icons";
 import colors from "../configs/colors";
-import {AntDesign, Ionicons} from "@expo/vector-icons";
+import Constants from "expo-constants";
+import tailwind from "twrnc";
 import {useNavigation} from "@react-navigation/core";
 
 const MessageScreen = ({route}) => {
-    const {otherUser} = route.params;
-    const currentUser = auth.currentUser;
+    const user = auth.currentUser;
     const [messages, setMessages] = useState([]);
+    const [messageText, setMessageText] = useState("");
     const [profilePic, setProfilePic] = useState(null);
-    const [displayName, setDisplayName] = useState(null);
+    const [userName, setUserName] = useState("Name");
+    const {conversationId, otherUserUid} = route.params;
 
+    const getUserByUid = httpsCallable(functions, "getUserByUid");
     const navigation = useNavigation();
 
-    const getProfilePic = async () => {
-        const fileRef = ref(storage, 'users/' + otherUser.uid + '/profilePic');
+    const displayUser = async () => {
+        await getProfilePic(otherUserUid)
+            .catch(e => {
+                console.log(e);
+            })
+        await getUserByUid({uid: otherUserUid}).then(r => {
+            setUserName(r.data.displayName)
+        }).catch(e => {
+            console.log(e);
+        })
+    }
+
+    const getProfilePic = async (data) => {
+        const fileRef = ref(storage, 'users/' + data + '/profilePic');
         const url = getDownloadURL(fileRef);
         await url.then(r => {
             if (url["_z"] !== undefined) {
@@ -44,113 +54,131 @@ const MessageScreen = ({route}) => {
     }
 
     useEffect(() => {
-        const messagesRef = collection(db, 'messages');
-        const q = query(messagesRef, where('users', 'array-contains-any', [currentUser.uid, otherUser.uid]), orderBy('createdAt', 'desc'));
-
-        getProfilePic().then(r => {
-            //profilePic is set
-        }).catch(e => {
-            console.log(e);
+        displayUser().catch((error) => {
+            console.error(error);
         });
+    }, []);
 
-        if (!otherUser.name && otherUser.displayName !== null) {
-            setDisplayName(otherUser.displayName);
-        } else {
-            setDisplayName(otherUser.name);
-        }
-
-        const unsubscribe = onSnapshot(q, querySnapshot => {
-            const newMessages = [];
-            querySnapshot.forEach(doc => {
-                const message = doc.data();
-                newMessages.push({
-                    _id: doc.id,
-                    text: message.text,
-                    createdAt: message.createdAt.toDate(),
-                    user: {
-                        _id: message.user._id,
-                        name: message.user.name,
-                    },
-                });
+    useEffect(() => {
+        const messagesRef = collection(db, "messages");
+        const conversationMessagesQuery = query(
+            messagesRef,
+            where("conversationId", "==", conversationId),
+            orderBy("timestamp", "asc")
+        );
+        const unsubscribeMessages = onSnapshot(conversationMessagesQuery, (snapshot) => {
+            const newMessages = snapshot.docs.map((doc) => {
+                return {id: doc.id, ...doc.data()};
             });
             setMessages(newMessages);
         });
 
-        return () => unsubscribe();
-    }, [currentUser, otherUser]);
+        return () => {
+            unsubscribeMessages();
+        };
+    }, [conversationId]);
 
-    const handleSend = async newMessages => {
-        const message = newMessages[0];
-        const uidToName = {}
-        uidToName[currentUser.uid] = currentUser.displayName ? currentUser.displayName : currentUser.name;
-        uidToName[otherUser.uid] = otherUser.displayName ? otherUser.displayName : otherUser.name
-        try {
-            await addDoc(collection(db, 'messages'), {
-                text: message.text,
-                createdAt: new Date(),
-                users: [currentUser.uid, otherUser.uid],
-                user: {
-                    _id: currentUser.uid,
-                    name: currentUser.displayName,
-                },
-                uidToName: uidToName,
-            });
-        } catch (error) {
-            console.error('Error adding message: ', error);
+    const handleSend = () => {
+        if (messageText.trim() === "") {
+            return;
         }
+        const addMessage = httpsCallable(functions, "addMessage");
+        addMessage({conversationId, message: messageText}).catch((error) => {
+            console.error(error);
+        });
+        setMessageText("");
     };
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
+            <View style={tailwind`h-16 bg-white items-center justify-center flex flex-row`}>
                 <TouchableOpacity
-                    style={tailwind`absolute top-14 left-4 z-30 w-9 h-9 rounded-full bg-white justify-center items-center shadow`}
+                    style={tailwind`absolute top-3 left-4 z-30 w-9 h-9 rounded-full bg-white justify-center items-center shadow`}
                     onPress={() => navigation.goBack()}>
                     <Ionicons name="arrow-back" size={18} color={colors.black}/>
                 </TouchableOpacity>
-                {profilePic ? <Image source={{uri: profilePic}} style={tailwind`w-9 h-9 mr-1 rounded-full`}/> :
-                    <AntDesign name="user" size={24} color={colors.primary}
-                               style={tailwind`w-10 h-10 mr-1 rounded-full`}/>}
-                <Text style={tailwind`text-xs font-bold`}>{displayName}</Text>
+                <View
+                    style={tailwind`w-8 h-8 rounded-full overflow-hidden bg-gray-200 justify-center items-center mr-2`}>
+                    {profilePic !== null ? (
+                        <Image source={{uri: profilePic}} style={tailwind`w-full h-full`}/>
+                    ) : (
+                        <Text style={tailwind`text-2xl text-center`}>{userName.split(" ")[0].charAt(0)}</Text>
+                    )}
+                </View>
+                <Text style={tailwind`text-xl font-bold`}>{userName.split(" ")[0]}</Text>
             </View>
-            <GiftedChat
-                messages={messages}
-                onSend={handleSend}
-                user={{
-                    _id: currentUser.uid,
-                    name: currentUser.displayName,
-                }}
-                messagesContainerStyle={{
-                    backgroundColor: '#fff',
-                }}
-                textInputStyle={{
-                    backgroundColor: '#fff',
-                    borderRadius: 20,
-                }}
-                renderAvatar={null}
-                maxComposerHeight={0}
-                scrollToBottom
+            <FlatList
+                data={messages}
+                keyExtractor={(item) => item.id}
+                renderItem={({item}) => (
+                    <View style={item.senderId === user?.uid ? styles.senderMessage : styles.receiverMessage}>
+                        <Text
+                            style={item.senderId === user?.uid ? tailwind`text-white` : tailwind`text-black`}>{item.message}</Text>
+                    </View>
+                )}
             />
+            <View style={styles.inputContainer}>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Type a message..."
+                    value={messageText}
+                    onChangeText={(text) => setMessageText(text)}
+                />
+                <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+                    <MaterialCommunityIcons name={"send"} size={24} color={colors.slate}/>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#fff',
         flex: 1,
-    },
-    header: {
-        backgroundColor: '#fff',
+        backgroundColor: "#fff",
         paddingTop: Constants.statusBarHeight,
-        position: 'absolute',
-        zIndex: 1,
-        width: '100%',
-        height: 110,
-        alignItems: 'center',
-        justifyContent: 'center',
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
+    },
+    senderMessage: {
+        backgroundColor: "#0284C7",
+        padding: 10,
+        borderRadius: 10,
+        alignSelf: "flex-end",
+        margin: 5,
+        maxWidth: "80%",
+    },
+    receiverMessage: {
+        backgroundColor: "#E7E5E4",
+        padding: 10,
+        borderRadius: 10,
+        alignSelf: "flex-start",
+        margin: 5,
+        maxWidth: "80%",
+    },
+    inputContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        backgroundColor: "#fff",
+        padding: 20,
+        width: "100%",
+        position: "absolute",
+        bottom: 0,
+    },
+    input: {
+        flex: 1,
+        marginRight: 10,
+        borderWidth: 1,
+        borderColor: "#ddd",
+        borderRadius: 5,
+        padding: 5,
+    },
+    sendButton: {
+        padding: 10,
+        borderRadius: 5,
+    },
+    sendButtonText: {
+        color: "white",
+        fontWeight: "bold",
     },
 });
 

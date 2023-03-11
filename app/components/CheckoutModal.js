@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import { useSelector } from 'react-redux';
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 import { selectCartItems, selectTotalPrice } from '../redux/slices/basketSlice';
 import { useNavigation } from '@react-navigation/core';
 

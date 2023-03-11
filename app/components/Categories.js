@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 import { categoriesData } from '../data/categoriesData'
 
 const Categories = (props) => {

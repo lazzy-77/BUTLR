@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps'
-import tailwind from 'tailwind-react-native-classnames';
+import tailwind from 'twrnc';
 import { Entypo } from '@expo/vector-icons';
 
 const ServiceMap = ({ coordinates, title, returnToPin, setReturnToPin }) => {
