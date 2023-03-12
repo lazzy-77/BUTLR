@@ -1,11 +1,12 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
-import {AntDesign, Feather, Ionicons} from '@expo/vector-icons';
+import {AntDesign, Entypo, Feather, Ionicons} from '@expo/vector-icons';
 import colors from '../configs/colors';
 import JobsScreen from '../screens/JobsScreen'
 import AccountScreen from '../screens/AccountScreen';
 import SelectedJobsScreen from "../screens/SelectedJobsScreen";
 import ConversationsScreen from "../screens/ConversationsScreen";
+import CreatedJobsScreen from "../screens/CreatedJobsScreen";
 
 const Tab = createBottomTabNavigator()
 
@@ -35,6 +36,13 @@ const MainTabNavigator = () => {
                         options={{
                             tabBarIcon: ({color, size}) => (
                                 <AntDesign name="checkcircle" color={color} size={size}/>
+                            )
+                        }}
+            />
+            <Tab.Screen name="Created" component={CreatedJobsScreen}
+                        options={{
+                            tabBarIcon: ({color, size}) => (
+                                <Entypo name="suitcase" size={size} color={color} />
                             )
                         }}
             />

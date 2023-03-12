@@ -20,7 +20,6 @@ const PendingJobCard = (props) => {
     const jobLocation = {latitude: location[0], longitude: location[1]};
     const userLocation = {latitude: latitude, longitude: longitude};
     const distance = getDistance(jobLocation, userLocation);
-    const navigation = useNavigation();
 
     const getProfilePic = async () => {
         const fileRef = ref(storage, 'users/' + user.uid + '/profilePic');
@@ -40,14 +39,6 @@ const PendingJobCard = (props) => {
         } else {
             return `${(distance / 1000).toFixed(0)}km`
         }
-    }
-
-    const handlePress = (item) => {
-        navigation.navigate("PendingJobDetailsScreen", {
-            item: {...item},
-            userLocation: {...userLocation},
-            refreshServiceData: refreshServiceData
-        })
     }
 
     useEffect(() => {
