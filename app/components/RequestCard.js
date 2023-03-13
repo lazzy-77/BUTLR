@@ -9,6 +9,8 @@ function RequestCard(props) {
     const [userName, setUserName] = useState("Name");
     const getUserByUid = httpsCallable(functions, 'getUserByUid');
     const navigation = useNavigation();
+    const job = props.job;
+    const setLoading = props.setLoading;
 
     const getProfilePic = async (uid) => {
         const fileRef = ref(storage, 'users/' + uid + '/profilePic');
@@ -24,9 +26,13 @@ function RequestCard(props) {
 
     const handleAccept = () => {
         const acceptJobRequest = httpsCallable(functions, 'acceptJobRequest');
-        acceptJobRequest({jobId: props.uid, acceptedUserId: props.uid}).then(r => {
-            navigation.goBack()
+        setLoading(true);
+        acceptJobRequest({jobId: job.id, acceptedUserId: props.uid}).then(r => {
+            setLoading(false);
+            alert("Accepted!");
+            navigation.goBack();
         }).catch(e => {
+            setLoading(false);
             console.log(e);
         })
     }

@@ -65,7 +65,9 @@ const MessageScreen = ({route}) => {
     }
 
     useEffect(() => {
-        displayUser().catch((error) => {
+        displayUser().then(r => {
+            //profilePic is set
+        }).catch((error) => {
             console.error(error);
         });
     }, []);

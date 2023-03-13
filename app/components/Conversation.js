@@ -63,7 +63,7 @@ const Conversation = (props) => {
                                 </Text>
                             }
                         </View>
-                        <View style={tailwind`overflow-hidden min-w-72 max-w-72 min-h-14 max-h-14`}>
+                        <View style={tailwind`overflow-hidden min-h-14 max-h-14 flex flex-1`}>
                             <View>
                                 <Text style={styles.conversationTitle}>
                                     {userName}
@@ -71,15 +71,18 @@ const Conversation = (props) => {
                             </View>
                             <Text numberOfLines={1}
                                   style={styles.conversationLastMessage}>{props.item.lastMessage}</Text>
-                            <Text style={tailwind`text-right text-gray-400`}>
-                                {new Date(props.item.timestamp._seconds * 1000 + props.item.timestamp._nanoseconds / 1000000).toLocaleTimeString(
-                                    [], {
-                                        hour: "numeric",
-                                        minute: "numeric",
-                                        hour12: true
-                                    })}
-                            </Text>
+                            <View style={tailwind`flex-1`}>
+                                <Text style={tailwind`text-right text-gray-400`} numberOfLines={1}>
+                                    {new Date(props.item.timestamp._seconds * 1000 + props.item.timestamp._nanoseconds / 1000000).toLocaleTimeString(
+                                        [], {
+                                            hour: "numeric",
+                                            minute: "numeric",
+                                            hour12: true
+                                        })}
+                                </Text>
+                            </View>
                         </View>
+
                     </View>
                 </TouchableOpacity>)
         }

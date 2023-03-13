@@ -18,6 +18,7 @@ import * as PropTypes from "prop-types";
 import PendingJobCard from "../components/PendingJobCard";
 import * as Location from "expo-location";
 import {useNavigation} from "@react-navigation/core";
+import SelectedActiveJobCard from "../components/SelectedActiveJobCard";
 
 const SelectedJobsScreen = () => {
     const [pendingJobsLoading, setPendingJobsLoading] = useState(false);
@@ -49,7 +50,14 @@ const SelectedJobsScreen = () => {
         setLoading(false);
     }, [])
 
-    const handlePress = (item) => {
+    const handleActiveJobPress = (item) => {
+        navigation.navigate("SelectedActiveJobDetailsScreen", {
+            item: {...item},
+            userLocation: {...location},
+        })
+    }
+
+    const handlePendingJobPress = (item) => {
         navigation.navigate("PendingJobDetailsScreen", {
             item: {...item},
             userLocation: {...location},
@@ -60,14 +68,32 @@ const SelectedJobsScreen = () => {
         //Get pending jobs
         const getUserPendingJobs = httpsCallable(functions, 'getUserPendingJobs')
         const getUserActiveJobs = httpsCallable(functions, 'getUserActiveJobs')
+        const getUserPendingConfirmationJobs = httpsCallable(functions, 'getUserPendingConfirmationJobs')
+
         setActiveJobsLoading(true)
-        const activeJobs = await getUserActiveJobs().then(r => {
-            setActiveJobs(r.data)
-            setActiveJobsLoading(false)
-        }).catch(e => {
+        const [activeJobs, pendingConfirmationJobs] = await Promise.all([
+            getUserActiveJobs().then(r => r.data),
+            getUserPendingConfirmationJobs().then(r => r.data),
+        ]).catch(e => {
             console.log(e)
             setActiveJobsLoading(false)
         })
+
+        const allActiveJobs = [...pendingConfirmationJobs, ...activeJobs];
+        const sortedActiveJobs = allActiveJobs.sort((a, b) => {
+            if (a.status === "Pending Confirmation" && b.status === "Pending Confirmation") {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            } else if (a.status === "Pending Confirmation") {
+                return -1;
+            } else if (b.status === "Pending Confirmation") {
+                return 1;
+            } else {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            }
+        });
+        setActiveJobs(sortedActiveJobs);
+        setActiveJobsLoading(false);
+
         setPendingJobsLoading(true)
         const pendingJobs = await getUserPendingJobs().then(r => {
             setPendingJobs(r.data)
@@ -108,82 +134,14 @@ const SelectedJobsScreen = () => {
                                 <ActivityIndicator size="large" color={colors.primary}/>
                             </View>
                         ) : (
-                            <ScrollView style={tailwind`bg-gray-100 rounded-xl`}>
+                            <ScrollView style={tailwind`rounded-xl`}>
                                 {activeJobs && activeJobs.map((job, index) => (
-                                    <View key={index} style={tailwind`border-b border-gray-100`}>
-                                        <View style={tailwind`flex flex-row`}>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Job ID
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    {job.jobId}
-                                                </Text>
-                                            </View>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Job Status
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    {job.jobStatus}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                        <View style={tailwind`flex flex-row`}>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Job Type
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    {job.jobType}
-                                                </Text>
-                                            </View>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Job Date
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    {job.jobDate}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                        <View style={tailwind`flex flex-row`}>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Job Time
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    {job.jobTime}
-                                                </Text>
-                                            </View>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Job Location
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    {job.jobLocation}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                        <View style={tailwind`flex flex-row`}>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Job Description
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    {job.jobDescription}
-                                                </Text>
-                                            </View>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Job Price
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    {job.jobPrice}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                    </View>
+                                    <SelectedActiveJobCard
+                                        key={index}
+                                        job={job}
+                                        location={location}
+                                        onPress={() => handleActiveJobPress(job)}
+                                    />
                                 ))}
                             </ScrollView>)}
                     </View>
@@ -202,7 +160,7 @@ const SelectedJobsScreen = () => {
                                         key={index}
                                         job={job}
                                         location={location}
-                                        onPress={() => handlePress(job)}
+                                        onPress={() => handlePendingJobPress(job)}
                                     />
                                 ))}
                             </ScrollView>)}

@@ -1,26 +1,31 @@
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import colors from '../configs/colors';
-import {AntDesign, Entypo, Foundation, Ionicons, MaterialCommunityIcons, Octicons} from '@expo/vector-icons';
+import {
+    AntDesign,
+    Entypo,
+    FontAwesome,
+    Foundation,
+    Ionicons,
+    MaterialCommunityIcons,
+    Octicons
+} from '@expo/vector-icons';
 import tailwind from 'twrnc';
 import ServiceMap from '../components/ServiceMap';
 import {getDistance} from "geolib";
 import {Video} from "expo-av";
 import {auth, functions, getDownloadURL, httpsCallable, ref, storage} from "../configs/firebase";
 import MessageScreen from '../screens/MessageScreen';
+import {handleNextAction} from "@stripe/stripe-react-native";
 
-const PendingJobDetailsScreen = ({route, navigation}) => {
+const SelectedActiveJobDetailsScreen = ({route, navigation}) => {
     const [otherUser, setOtherUser] = useState(null);
     const [profilePic, setProfilePic] = useState(null);
     const [returnToPin, setReturnToPin] = useState(false);
     const [loading, setLoading] = useState(false);
-    const {name} = route?.params?.item;
+    const {name, jobStatus} = route?.params?.item;
     const otherUserUid = route?.params?.item.createdBy;
     const getUserByUid = httpsCallable(functions, 'getUserByUid');
-    const [buttonText, setButtonText] = useState('Apply');
-    const [buttonStyle, setButtonStyle] = useState(styles.button);
-
-    const refreshServiceData = route?.params?.refreshServiceData;
 
     const coordinates = {
         latitude: route?.params?.item.location[0],
@@ -36,26 +41,14 @@ const PendingJobDetailsScreen = ({route, navigation}) => {
         longitude: job.location[1]
     }
 
-    useEffect(() => {
-        setLoading(true);
-        getOtherUser().then(() => {
-            setLoading(false);
-        });
-
-        if (route?.params?.item?.requestedBy && route?.params?.item?.requestedBy.includes(auth.currentUser.uid)) {
-            setButtonText('Pending');
-            setButtonStyle(styles.button_pending);
+    const getStatusColor = () => {
+        switch (jobStatus) {
+            case "Active":
+                return "#06c167";
+            case "Pending Confirmation":
+                return "#7e22ce";
         }
-
-    }, [])
-
-    useEffect(() => {
-        getProfilePic().then(() => {
-            //Profile pic is set
-        }).catch(e => {
-            console.log(e);
-        });
-    }, [otherUser])
+    }
 
     const getProfilePic = async () => {
         const fileRef = ref(storage, 'users/' + otherUser.uid + '/profilePic');
@@ -83,53 +76,38 @@ const PendingJobDetailsScreen = ({route, navigation}) => {
         setOtherUser(response.data);
     }
 
-    const handleApply = async () => {
-        if (buttonText === 'Apply') {
-            setLoading(true);
-            const addRequestToJob = httpsCallable(functions, 'addRequestToJob');
-            await addRequestToJob({jobId: job.id}).then(() => {
-                setLoading(false);
-                setButtonText('Pending');
-                setButtonStyle(styles.button_pending);
-                navigation.goBack();
-                alert('Request sent!')
-            }).catch(e => {
-                alert(e);
-                setLoading(false);
-            })
-        } else {
-            Alert.alert(
-                'Cancel Request',
-                'Are you sure you want to cancel your request for this job?',
-                [
-                    {
-                        text: 'Cancel',
-                        onPress: () => {
-                            //Do nothing
-                        },
-                        style: 'cancel'
+    const handleCancel = async () => {
+        const cancelActiveJob = httpsCallable(functions, 'cancelActiveJob');
+
+        Alert.alert(
+            "Cancel Job",
+            "Are you sure you want to cancel this job?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => {
+                        //Do nothing
                     },
-                    {
-                        text: 'Yes',
-                        onPress: async () => {
-                            setLoading(true);
-                            const removeRequestFromJob = httpsCallable(functions, 'removeRequestFromJob');
-                            await removeRequestFromJob({jobId: job.id}).then(() => {
-                                setLoading(false);
-                                setButtonText('Apply');
-                                setButtonStyle(styles.button);
-                                navigation.goBack();
-                                alert('Request cancelled!')
-                            }).catch(e => {
-                                alert(e);
-                                setLoading(false);
-                            })
-                        }
-                    }],
-                {cancelable: false}
-            );
-        }
-    };
+                    style: "cancel"
+                },
+                {
+                    text: "Yes",
+                    onPress: () => {
+                        setLoading(true)
+                        cancelActiveJob({jobId: job.id}).then(() => {
+                            setLoading(false);
+                            navigation.goBack();
+                            alert('Job cancelled');
+                        }).catch(e => {
+                            setLoading(false);
+                            console.log(e);
+                        })
+                    }
+                }
+            ],
+            {cancelable: false}
+        );
+    }
 
     const handleMessage = async () => {
         setLoading(true);
@@ -155,7 +133,56 @@ const PendingJobDetailsScreen = ({route, navigation}) => {
             });
     };
 
+    const handleFinish = () => {
+        const completeJob = httpsCallable(functions, 'completeJob');
+
+        Alert.alert(
+            "Finish Job",
+            "Are you sure this job is complete?",
+            [
+                {
+                    text: "No",
+                    onPress: () => {
+                        //Do nothing
+                    },
+                    style: "cancel"
+                },
+                {
+                    text: "Yes",
+                    onPress: () => {
+                        setLoading(true);
+                        completeJob({jobId: job.id}).then(() => {
+                            setLoading(false);
+                            navigation.goBack();
+                            alert(`Job finished! Waiting for confirmation from ${otherUser.displayName}.`);
+                        }).catch(e => {
+                            setLoading(false);
+                            console.log(e);
+                        })
+                    }
+                }
+            ],
+            {cancelable: false}
+        );
+    }
+
     const distance = getDistance(pointA, pointB);
+
+    useEffect(() => {
+        setLoading(true);
+        getOtherUser().then(() => {
+            setLoading(false);
+        });
+
+    }, [])
+
+    useEffect(() => {
+        getProfilePic().then(() => {
+            //Profile pic is set
+        }).catch(e => {
+            console.log(e);
+        });
+    }, [otherUser])
 
     return (
         <View style={styles.container}>
@@ -180,12 +207,13 @@ const PendingJobDetailsScreen = ({route, navigation}) => {
                     <View style={styles.content}>
                         <View style={tailwind`p-6`} showsVerticalScrollIndicator={false}>
                             <View style={styles.header}>
-                                <Text style={styles.title} onPress={() => console.log(route.params?.item)}>{job.title}</Text>
+                                <Text style={styles.title}
+                                      onPress={() => console.log(route.params?.item)}>{job.title}</Text>
                                 <TouchableOpacity onPress={() => setReturnToPin(true)}>
                                     <Entypo name="location" size={24} color={'#000'}/>
                                 </TouchableOpacity>
                             </View>
-                            <View style={tailwind`flex flex-row justify-between items-start`}>
+                            <View style={tailwind`flex flex-row flex-wrap justify-between items-start`}>
                                 <View style={styles.info}>
                                     <View style={styles.infoItem}>
                                         <MaterialCommunityIcons name="clock-time-four" size={14} color="#06C167"/>
@@ -200,11 +228,13 @@ const PendingJobDetailsScreen = ({route, navigation}) => {
                                         <Text style={styles.infoText}>• {getDisplayDistance(distance)}</Text>
                                     </View>
                                 </View>
-                            </View>
-                            <View style={tailwind`flex flex-row justify-between items-start mt-1`}>
                                 <View style={styles.infoItem}>
                                     <Octicons name="apps" size={16} color="#38bdf8"/>
                                     <Text style={styles.infoText}>• {job.categoryDisplayName}</Text>
+                                </View>
+                                <View style={styles.infoItem}>
+                                    <FontAwesome name="circle" size={12} color={getStatusColor()}/>
+                                    <Text style={styles.infoText}>• {jobStatus}</Text>
                                 </View>
                             </View>
                             <View style={tailwind`rounded-md mt-1 flex flex-row items-center max-h-12 h-12`}>
@@ -262,16 +292,29 @@ const PendingJobDetailsScreen = ({route, navigation}) => {
                                 </View>
                             )}
                             <View style={tailwind`flex flex-row mt-2 items-center h-20 justify-between`}>
-                                <TouchableOpacity style={buttonStyle} onPress={() => handleApply()}>
+                                <TouchableOpacity
+                                    style={tailwind`p-2 rounded-md flex flex-row justify-center items-center h-12 bg-[#38bdf8] flex-1 mr-1`}
+                                    onPress={() => handleCancel()}>
                                     <Text style={tailwind`text-xl font-bold text-white`}>
-                                        {buttonText}
+                                        Cancel
                                     </Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.button} onPress={() => handleMessage()}>
+                                <TouchableOpacity
+                                    style={tailwind`p-2 rounded-md flex flex-row justify-center items-center h-12 bg-[#FD5200] flex-1`}
+                                    onPress={() => handleMessage()}>
                                     <Text style={tailwind`text-xl font-bold text-white`}>
                                         Message
                                     </Text>
                                 </TouchableOpacity>
+                                {jobStatus === "Active" &&
+                                    <TouchableOpacity
+                                        style={tailwind`p-2 rounded-md flex flex-row justify-center items-center h-12 bg-[#06C167] flex-1 ml-1`}
+                                        onPress={() => handleFinish()}>
+                                        <Text style={tailwind`text-xl font-bold text-white`}>
+                                            Finish
+                                        </Text>
+                                    </TouchableOpacity>
+                                }
                             </View>
                         </View>
                     </View>
@@ -363,4 +406,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default PendingJobDetailsScreen;
+export default SelectedActiveJobDetailsScreen;

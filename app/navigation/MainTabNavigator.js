@@ -20,8 +20,8 @@ const MainTabNavigator = () => {
                 tabBarStyle: {
                     borderTopWidth: 0,
                     paddingTop: 10,
-                    paddingBottom: 10,
-                    height: 60,
+                    paddingBottom: 20,
+                    height: 70,
                 },
             }}
         >

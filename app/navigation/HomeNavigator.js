@@ -12,6 +12,8 @@ import MessageScreen from "../screens/MessageScreen";
 import CreatedJobsScreen from "../screens/CreatedJobsScreen";
 import CompletedJobDetailsScreen from "../screens/CompletedJobDetailsScreen";
 import OpenJobDetailsScreen from "../screens/OpenJobDetailsScreen";
+import SelectedActiveJobDetailsScreen from "../screens/SelectedActiveJobDetailsScreen";
+import CreatedActiveJobDetailsScreen from "../screens/CreatedActiveJobDetailsScreen";
 
 const Stack = createStackNavigator();
 
@@ -34,6 +36,8 @@ export default function HomeNavigator() {
             <Stack.Screen name="CompletedJobDetailsScreen" component={CompletedJobDetailsScreen} />
             <Stack.Screen name="OpenJobDetailsScreen" component={OpenJobDetailsScreen} />
             <Stack.Screen name="MessageScreen" component={MessageScreen} />
+            <Stack.Screen name="SelectedActiveJobDetailsScreen" component={SelectedActiveJobDetailsScreen} />
+            <Stack.Screen name="CreatedActiveJobDetailsScreen" component={CreatedActiveJobDetailsScreen} />
         </Stack.Navigator>
     )
 }

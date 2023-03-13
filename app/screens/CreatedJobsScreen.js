@@ -17,6 +17,7 @@ import colors from "../configs/colors";
 import {useNavigation} from "@react-navigation/core";
 import CompletedJobCard from "../components/CompletedJobCard";
 import OpenJobCard from "../components/OpenJobCard";
+import CreatedActiveJobCard from "../components/CreatedActiveJobCard";
 
 const CreatedJobsScreen = () => {
     const [openJobsLoading, setOpenJobsLoading] = useState(false);
@@ -41,7 +42,7 @@ const CreatedJobsScreen = () => {
     }, [])
 
     const handlePressActiveJobs = (item) => {
-        navigation.navigate("ActiveJobDetailsScreen", {
+        navigation.navigate("CreatedActiveJobDetailsScreen", {
             item: {...item},
         })
     }
@@ -60,38 +61,59 @@ const CreatedJobsScreen = () => {
 
     const refreshJobs = async () => {
         //Get pending jobs
-        const getOpenJobsCreatedByUser = httpsCallable(functions, 'getOpenJobsCreatedByUser')
-        const getActiveJobsCreatedByUser = httpsCallable(functions, 'getActiveJobsCreatedByUser')
-        const getCompletedJobsCreatedByUser = httpsCallable(functions, 'getCompletedJobsCreatedByUser')
+        const getActiveJobsCreatedByUser = httpsCallable(functions, 'getActiveJobsCreatedByUser');
+        const getOpenJobsCreatedByUser = httpsCallable(functions, 'getOpenJobsCreatedByUser');
+        const getCompletedJobsCreatedByUser = httpsCallable(functions, 'getCompletedJobsCreatedByUser');
+        const getPendingConfirmationJobsCreatedByUser = httpsCallable(functions, 'getPendingConfirmationJobsCreatedByUser');
 
-        setActiveJobsLoading(true)
-        const activeJobs = await getActiveJobsCreatedByUser().then(r => {
-            setActiveJobs(r.data)
-            setActiveJobsLoading(false)
-        }).catch(e => {
-            console.log(e)
-            setActiveJobsLoading(false)
-        })
+        setActiveJobsLoading(true);
 
-        setOpenJobsLoading(true)
-        const openJobs = await getOpenJobsCreatedByUser().then(r => {
-            setOpenJobs(r.data.sort((a, b) => b.requestedBy.length - a.requestedBy.length))
-            setOpenJobsLoading(false)
-        }).catch(e => {
-            console.log(e)
-            setOpenJobsLoading(false)
-        })
+        const [activeJobs, pendingConfirmationJobs] = await Promise.all([
+            getActiveJobsCreatedByUser().then((r) => r.data),
+            getPendingConfirmationJobsCreatedByUser().then((r) => r.data),
+        ]).catch((e) => {
+            console.log(e);
+            setActiveJobsLoading(false);
+        });
 
-        setCompletedJobsLoading(true)
-        const completedJobs = await getCompletedJobsCreatedByUser().then(r => {
-            setCompletedJobs(r.data.sort( (a, b) => new Date(a.completedAt) - new Date(b.completedAt)))
-            setCompletedJobsLoading(false)
-        }).catch(e => {
-            console.log(e)
-            setCompletedJobsLoading(false)
-        })
-    }
+        const combinedJobs = [...pendingConfirmationJobs, ...activeJobs];
+        const sortedJobs = combinedJobs.sort((a, b) => {
+            if (a.status === "Pending Confirmation" && b.status === "Pending Confirmation") {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            } else if (a.status === "Pending Confirmation") {
+                return -1;
+            } else if (b.status === "Pending Confirmation") {
+                return 1;
+            } else {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            }
+        });
 
+        setActiveJobs(sortedJobs);
+        setActiveJobsLoading(false);
+
+        setOpenJobsLoading(true);
+        const openJobs = await getOpenJobsCreatedByUser()
+            .then((r) => {
+                setOpenJobs(r.data.sort((a, b) => b.requestedBy.length - a.requestedBy.length));
+                setOpenJobsLoading(false);
+            })
+            .catch((e) => {
+                console.log(e);
+                setOpenJobsLoading(false);
+            });
+
+        setCompletedJobsLoading(true);
+        const completedJobs = await getCompletedJobsCreatedByUser()
+            .then((r) => {
+                setCompletedJobs(r.data.sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt)));
+                setCompletedJobsLoading(false);
+            })
+            .catch((e) => {
+                console.log(e);
+                setCompletedJobsLoading(false);
+            });
+    };
 
     return (
         <Screen style={styles.container}>
@@ -122,82 +144,13 @@ const CreatedJobsScreen = () => {
                                 <ActivityIndicator size="large" color={colors.primary}/>
                             </View>
                         ) : (
-                            <ScrollView style={tailwind`bg-gray-100 rounded-xl`}>
+                            <ScrollView style={tailwind`rounded-xl`}>
                                 {activeJobs && activeJobs.map((job, index) => (
-                                    <View key={index} style={tailwind`border-b border-gray-100`}>
-                                        <View style={tailwind`flex flex-row`}>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Job ID
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    {job.jobId}
-                                                </Text>
-                                            </View>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Job Status
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    {job.jobStatus}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                        <View style={tailwind`flex flex-row`}>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Job Type
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    {job.jobType}
-                                                </Text>
-                                            </View>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Job Date
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    {job.jobDate}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                        <View style={tailwind`flex flex-row`}>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Job Time
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    {job.jobTime}
-                                                </Text>
-                                            </View>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Something title
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    Something here
-                                                </Text>
-                                            </View>
-                                        </View>
-                                        <View style={tailwind`flex flex-row`}>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Job Description
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    {job.jobDescription}
-                                                </Text>
-                                            </View>
-                                            <View style={tailwind`w-1/2`}>
-                                                <Text style={tailwind`text-sm font-bold text-gray-500`}>
-                                                    Job Price
-                                                </Text>
-                                                <Text style={tailwind`text-sm font-bold`}>
-                                                    {job.jobPrice}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                    </View>
+                                    <CreatedActiveJobCard
+                                        key={index}
+                                        job={job}
+                                        onPress={() => handlePressActiveJobs(job)}
+                                    />
                                 ))}
                             </ScrollView>)}
                     </View>

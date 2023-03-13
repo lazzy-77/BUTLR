@@ -11,21 +11,36 @@ import {
     View,
 } from 'react-native';
 import colors from '../configs/colors';
-import {Foundation, Ionicons, MaterialCommunityIcons, Octicons} from '@expo/vector-icons';
+import {FontAwesome, Foundation, Ionicons, MaterialCommunityIcons, Octicons} from '@expo/vector-icons';
 import tailwind from 'twrnc';
 import {Video} from "expo-av";
 import Constants from "expo-constants";
 import RequestCard from "../components/RequestCard";
-import {httpsCallable, functions} from "../configs/firebase";
+import {httpsCallable, functions, ref, storage, getDownloadURL} from "../configs/firebase";
 
-const OpenJobDetailsScreen = ({route, navigation}) => {
+const CreatedActiveJobDetailsScreen = ({route, navigation}) => {
     const [loading, setLoading] = useState(false);
     const job = route?.params?.item;
+    const [profilePic, setProfilePic] = useState(null);
+    const [userName, setUserName] = useState("Name");
+    const getUserByUid = httpsCallable(functions, 'getUserByUid');
 
-    const handleDelete = () => {
+    const getProfilePic = async (uid) => {
+        const fileRef = ref(storage, 'users/' + uid + '/profilePic');
+        const url = getDownloadURL(fileRef);
+        await url.then(r => {
+            if (url["_z"] !== undefined) {
+                setProfilePic(url["_z"]);
+            }
+        }).catch(e => {
+            console.log(e);
+        })
+    }
+
+    const handleCancel = () => {
         Alert.alert(
-            "Delete Job",
-            "Are you sure you want to delete this job?",
+            "Cancel Job",
+            "Are you sure you want to cancel this job?",
             [
                 {
                     text: "No",
@@ -36,11 +51,11 @@ const OpenJobDetailsScreen = ({route, navigation}) => {
                     text: "Yes",
                     onPress: () => {
                         setLoading(true)
-                        const deleteJob = httpsCallable(functions, 'deleteJob');
-                        deleteJob({jobId: job.id}).then(() => {
+                        const cancelActiveJob = httpsCallable(functions, 'cancelActiveJob');
+                        cancelActiveJob({jobId: job.id}).then(() => {
                             setLoading(false)
                             navigation.goBack();
-                            alert("Job deleted successfully!")
+                            alert("Job cancelled successfully!")
                         }).catch((error) => {
                             setLoading(false)
                             console.log(error);
@@ -48,9 +63,89 @@ const OpenJobDetailsScreen = ({route, navigation}) => {
                     }
                 }
             ],
-            { cancelable: false }
+            {cancelable: false}
         );
     }
+
+    const handleConfirm = () => {
+        Alert.alert(
+            "Confirm Job",
+            "Can you confirm this job has been finished?",
+            [
+                {
+                    text: "No",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                {
+                    text: "Yes",
+                    onPress: () => {
+                        setLoading(true)
+                        const confirmJobCompletion = httpsCallable(functions, 'confirmJobCompletion');
+                        confirmJobCompletion({jobId: job.id}).then(() => {
+                            setLoading(false)
+                            navigation.goBack();
+                            alert("Job confirmed successfully!")
+                        }).catch((error) => {
+                            setLoading(false)
+                            console.log(error);
+                        });
+                    }
+                }
+            ],
+            {cancelable: false}
+        );
+    }
+
+    const handleReject = () => {
+        Alert.alert(
+            "Reject Job",
+            "Only reject the job if the job is not finished regardless of quality of completed job. Are you sure you want to reject this job?",
+            [
+                {
+                    text: "No",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                {
+                    text: "Yes",
+                    onPress: () => {
+                        setLoading(true)
+                        const rejectJobCompletion = httpsCallable(functions, 'rejectJobCompletion');
+                        rejectJobCompletion({jobId: job.id}).then(() => {
+                            setLoading(false)
+                            navigation.goBack();
+                            alert("Job rejected successfully!")
+                        }).catch((error) => {
+                            setLoading(false)
+                            console.log(error);
+                        });
+                    }
+                }
+            ],
+            {cancelable: false}
+        );
+    }
+
+    const getStatusColor = () => {
+        switch (job.jobStatus) {
+            case "Active":
+                return "#06c167";
+            case "Pending Confirmation":
+                return "#7e22ce";
+        }
+    }
+
+    useEffect(() => {
+        getProfilePic(job.jobAcceptedBy).catch((error) => {
+            console.error(error);
+        });
+        getUserByUid({uid: job.jobAcceptedBy}).then(r => {
+            setUserName(r.data.displayName)
+        }).catch(e => {
+            console.log(e);
+        })
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -83,6 +178,10 @@ const OpenJobDetailsScreen = ({route, navigation}) => {
                                 <View style={styles.infoItem}>
                                     <Octicons name="apps" size={16} color="#38bdf8"/>
                                     <Text style={styles.infoText}>• {job.categoryDisplayName}</Text>
+                                </View>
+                                <View style={styles.infoItem}>
+                                    <FontAwesome name="circle" size={12} color={getStatusColor()}/>
+                                    <Text style={styles.infoText}>• {job.jobStatus}</Text>
                                 </View>
                             </View>
                             <ScrollView style={tailwind`bg-gray-50 rounded-md mt-1 h-36 max-h-36`}>
@@ -119,22 +218,51 @@ const OpenJobDetailsScreen = ({route, navigation}) => {
                             )}
                             <View style={tailwind`bg-gray-50 mt-1 rounded-md`}>
                                 <Text style={tailwind`text-xl m-1`}>
-                                    Requests ({job.requestedBy.length})
+                                    Accepted By:
                                 </Text>
-                                <ScrollView>
-                                    {job.requestedBy.map((uid, index) => {
-                                        return (
-                                            <RequestCard key={index} uid={uid} job={job} setLoading={setLoading}/>
-                                        )
-                                    })}
-                                </ScrollView>
+                                <View style={tailwind`flex flex-row items-center p-2`}>
+                                    {profilePic !== null ?
+                                        <Image style={tailwind`w-12 h-12 rounded-full mr-2`}
+                                               source={{uri: profilePic}}/>
+                                        :
+                                        <Text style={tailwind`text-lg font-bold`}>
+                                            {userName.charAt(0)}
+                                        </Text>
+                                    }
+                                    <Text style={tailwind`text-lg font-bold`}>
+                                        {userName}
+                                    </Text>
+                                </View>
                             </View>
                             <View style={tailwind`flex flex-row mt-2 items-center h-20 justify-between`}>
-                                <TouchableOpacity style={tailwind`p-2 rounded-md flex flex-row justify-center items-center h-12 bg-[#EF4444] flex-1 mr-1`} onPress={() => handleDelete()}>
-                                    <Text style={tailwind`text-xl font-bold text-white`}>
-                                        Delete
-                                    </Text>
-                                </TouchableOpacity>
+                                {job.jobStatus === "Pending Confirmation" ?
+                                    <View style={tailwind`flex flex-row`}>
+                                        <TouchableOpacity
+                                            style={tailwind`p-2 rounded-md flex flex-row justify-center items-center h-12 bg-[#EF4444] flex-1 mr-1`}
+                                            onPress={() => handleReject()}
+                                        >
+                                            <Text style={tailwind`text-xl font-bold text-white`}>
+                                                Reject
+                                            </Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={tailwind`p-2 rounded-md flex flex-row justify-center items-center h-12 bg-[#06C167] flex-1 mr-1`}
+                                            onPress={() => handleConfirm()}
+                                        >
+                                            <Text style={tailwind`text-xl font-bold text-white`}>
+                                                Confirm
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                    :
+                                    <TouchableOpacity
+                                        style={tailwind`p-2 rounded-md flex flex-row justify-center items-center h-12 bg-[#EF4444] flex-1 mr-1`}
+                                        onPress={() => handleCancel()}
+                                    >
+                                        <Text style={tailwind`text-xl font-bold text-white`}>
+                                            Cancel
+                                        </Text>
+                                    </TouchableOpacity>}
                             </View>
                         </View>
                     </View>
@@ -213,4 +341,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default OpenJobDetailsScreen;
+export default CreatedActiveJobDetailsScreen;
