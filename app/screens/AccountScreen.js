@@ -97,13 +97,3 @@ const AccountScreen = () => {
 }
 
 export default AccountScreen;
-
-const SavedPlaces = ({title, text, Icon}) => (
-    <TouchableOpacity style={tailwind`flex-row items-center my-3`}>
-        <Icon/>
-        <View style={tailwind`ml-5`}>
-            <Text style={tailwind`text-gray-800`}>{title}</Text>
-            <Text style={tailwind`text-gray-600 text-xs mt-1`}>{text}</Text>
-        </View>
-    </TouchableOpacity>
-)
