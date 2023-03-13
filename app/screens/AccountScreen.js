@@ -86,27 +86,11 @@ const AccountScreen = () => {
                 </View>
             </View>
             <View style={tailwind`mx-4 border-t border-t-2 mt-5 border-gray-100`}>
-                <Text style={tailwind`text-gray-800 mt-2 text-lg mb-2`}>Saved places</Text>
-                <SavedPlaces
-                    title="Home"
-                    text="Add home"
-                    Icon={() => <AntDesign name="home" size={24} color="black"/>}
-                />
-                <SavedPlaces
-                    title="Word"
-                    text="Add work"
-                    Icon={() => <Ionicons name="md-briefcase-outline" size={24} color="black"/>}
-                />
-            </View>
-            <View style={tailwind`mx-4 border-t border-t-2 mt-5 border-gray-100`}>
                 <Text style={tailwind`text-gray-800 mt-2 text-lg`}>Other options</Text>
                 <TouchableOpacity onPress={() => signOut(auth)}>
                     <Text style={tailwind`text-green-900 mt-2`}>Sign out</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => console.log(auth.currentUser)}>
-                    <Text style={tailwind`text-green-900 mt-2`}>print user</Text>
-                </TouchableOpacity>
-                <CreateDummyData/>
+                {/*<CreateDummyData/>*/}
             </View>
         </Screen>
     );
