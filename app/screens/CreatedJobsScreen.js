@@ -14,32 +14,23 @@ import tailwind from "twrnc";
 import {functions, httpsCallable, auth} from '../configs/firebase';
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 import colors from "../configs/colors";
-import * as PropTypes from "prop-types";
-import PendingJobCard from "../components/PendingJobCard";
-import * as Location from "expo-location";
 import {useNavigation} from "@react-navigation/core";
-import SelectedActiveJobCard from "../components/SelectedActiveJobCard";
+import CompletedJobCard from "../components/CompletedJobCard";
+import OpenJobCard from "../components/OpenJobCard";
+import CreatedActiveJobCard from "../components/CreatedActiveJobCard";
 
-const SelectedJobsScreen = () => {
-    const [pendingJobsLoading, setPendingJobsLoading] = useState(false);
-    const [pendingJobs, setPendingJobs] = useState(null);
+const CreatedJobsScreen = () => {
+    const [openJobsLoading, setOpenJobsLoading] = useState(false);
+    const [openJobs, setOpenJobs] = useState(null);
     const [activeJobsLoading, setActiveJobsLoading] = useState(false);
     const [activeJobs, setActiveJobs] = useState(null);
-    const [location, setLocation] = useState(null);
+    const [completedJobsLoading, setCompletedJobsLoading] = useState(false);
+    const [completedJobs, setCompletedJobs] = useState(null);
     const [loading, setLoading] = useState(false);
-    const userUid = auth.currentUser.uid;
     const navigation = useNavigation();
 
     useEffect(() => {
         setLoading(true);
-
-        Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.BestForNavigation
-        }).then(r => {
-            setLocation(r.coords)
-        }).catch(e => {
-            console.log(e)
-        })
 
         refreshJobs().then(r => {
             //Jobs loaded
@@ -50,37 +41,38 @@ const SelectedJobsScreen = () => {
         setLoading(false);
     }, [])
 
-    const handleActiveJobPress = (item) => {
-        navigation.navigate("SelectedActiveJobDetailsScreen", {
+    const handlePressActiveJobs = (item) => {
+        navigation.navigate("CreatedActiveJobDetailsScreen", {
             item: {...item},
-            userLocation: {...location},
         })
     }
 
-    const handlePendingJobPress = (item) => {
-        navigation.navigate("PendingJobDetailsScreen", {
+    const handlePressOpenJobs = (item) => {
+        navigation.navigate("OpenJobDetailsScreen", {
             item: {...item},
-            userLocation: {...location},
         })
     }
+
 
     const refreshJobs = async () => {
         //Get pending jobs
-        const getUserPendingJobs = httpsCallable(functions, 'getUserPendingJobs')
-        const getUserActiveJobs = httpsCallable(functions, 'getUserActiveJobs')
-        const getUserPendingConfirmationJobs = httpsCallable(functions, 'getUserPendingConfirmationJobs')
+        const getActiveJobsCreatedByUser = httpsCallable(functions, 'getActiveJobsCreatedByUser');
+        const getOpenJobsCreatedByUser = httpsCallable(functions, 'getOpenJobsCreatedByUser');
+        const getCompletedJobsCreatedByUser = httpsCallable(functions, 'getCompletedJobsCreatedByUser');
+        const getPendingConfirmationJobsCreatedByUser = httpsCallable(functions, 'getPendingConfirmationJobsCreatedByUser');
 
-        setActiveJobsLoading(true)
+        setActiveJobsLoading(true);
+
         const [activeJobs, pendingConfirmationJobs] = await Promise.all([
-            getUserActiveJobs().then(r => r.data),
-            getUserPendingConfirmationJobs().then(r => r.data),
-        ]).catch(e => {
-            console.log(e)
-            setActiveJobsLoading(false)
-        })
+            getActiveJobsCreatedByUser().then((r) => r.data),
+            getPendingConfirmationJobsCreatedByUser().then((r) => r.data),
+        ]).catch((e) => {
+            console.log(e);
+            setActiveJobsLoading(false);
+        });
 
-        const allActiveJobs = [...pendingConfirmationJobs, ...activeJobs];
-        const sortedActiveJobs = allActiveJobs.sort((a, b) => {
+        const combinedJobs = [...pendingConfirmationJobs, ...activeJobs];
+        const sortedJobs = combinedJobs.sort((a, b) => {
             if (a.status === "Pending Confirmation" && b.status === "Pending Confirmation") {
                 return new Date(b.createdAt) - new Date(a.createdAt);
             } else if (a.status === "Pending Confirmation") {
@@ -91,24 +83,37 @@ const SelectedJobsScreen = () => {
                 return new Date(b.createdAt) - new Date(a.createdAt);
             }
         });
-        setActiveJobs(sortedActiveJobs);
+
+        setActiveJobs(sortedJobs);
         setActiveJobsLoading(false);
 
-        setPendingJobsLoading(true)
-        const pendingJobs = await getUserPendingJobs().then(r => {
-            setPendingJobs(r.data)
-            setPendingJobsLoading(false)
-        }).catch(e => {
-            console.log(e)
-            setPendingJobsLoading(false)
-        })
-    }
+        setOpenJobsLoading(true);
+        const openJobs = await getOpenJobsCreatedByUser()
+            .then((r) => {
+                setOpenJobs(r.data.sort((a, b) => b.requestedBy.length - a.requestedBy.length));
+                setOpenJobsLoading(false);
+            })
+            .catch((e) => {
+                console.log(e);
+                setOpenJobsLoading(false);
+            });
 
+        setCompletedJobsLoading(true);
+        const completedJobs = await getCompletedJobsCreatedByUser()
+            .then((r) => {
+                setCompletedJobs(r.data.sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt)));
+                setCompletedJobsLoading(false);
+            })
+            .catch((e) => {
+                console.log(e);
+                setCompletedJobsLoading(false);
+            });
+    };
 
     return (
         <Screen style={styles.container}>
             <View style={tailwind`border-b border-gray-100 pb-2 flex flex-row justify-center items-center`}>
-                <ScreenHeader screenName="Selected Jobs" headerButton={false}/>
+                <ScreenHeader screenName="Created Jobs" headerButton={false}/>
                 <TouchableOpacity style={tailwind`absolute right-0 pr-3`} onPress={() => {
                     refreshJobs().then(r => {
                         //Jobs loaded
@@ -125,7 +130,7 @@ const SelectedJobsScreen = () => {
                 </View>
             ) : (
                 <View style={tailwind`h-full mt-2`}>
-                    <View style={tailwind`h-2/5 mx-2`}>
+                    <View style={tailwind`h-3/8 mx-2`}>
                         <Text style={tailwind`text-lg font-bold`}>
                             Active Jobs
                         </Text>
@@ -136,31 +141,47 @@ const SelectedJobsScreen = () => {
                         ) : (
                             <ScrollView style={tailwind`rounded-xl`}>
                                 {activeJobs && activeJobs.map((job, index) => (
-                                    <SelectedActiveJobCard
+                                    <CreatedActiveJobCard
                                         key={index}
                                         job={job}
-                                        location={location}
-                                        onPress={() => handleActiveJobPress(job)}
+                                        onPress={() => handlePressActiveJobs(job)}
                                     />
                                 ))}
                             </ScrollView>)}
                     </View>
-                    <View style={tailwind`h-3/5 mx-2`}>
-                        <Text style={tailwind`text-lg font-bold underline`} onPress={() => console.log(pendingJobs)}>
-                            Pending Jobs
+                    <View style={tailwind`h-3/8 mx-2`}>
+                        <Text style={tailwind`text-lg font-bold underline`}>
+                            Open Jobs
                         </Text>
-                        {pendingJobsLoading ? (
+                        {openJobsLoading ? (
                             <View style={tailwind`h-full w-full justify-center items-center`}>
                                 <ActivityIndicator size="large" color={colors.primary}/>
                             </View>
                         ) : (
                             <ScrollView style={tailwind`bg-white rounded-xl`}>
-                                {pendingJobs && pendingJobs.map((job, index) => (
-                                    <PendingJobCard
+                                {openJobs && openJobs.map((job, index) => (
+                                    <OpenJobCard
                                         key={index}
                                         job={job}
-                                        location={location}
-                                        onPress={() => handlePendingJobPress(job)}
+                                        onPress={() => handlePressOpenJobs(job)}
+                                    />
+                                ))}
+                            </ScrollView>)}
+                    </View>
+                    <View style={tailwind`h-2/8 mx-2`}>
+                        <Text style={tailwind`text-lg font-bold underline`}>
+                            Completed Jobs
+                        </Text>
+                        {completedJobsLoading ? (
+                            <View style={tailwind`h-full w-full justify-center items-center`}>
+                                <ActivityIndicator size="large" color={colors.primary}/>
+                            </View>
+                        ) : (
+                            <ScrollView style={tailwind`bg-white rounded-xl`}>
+                                {completedJobs && completedJobs.map((job, index) => (
+                                    <CompletedJobCard
+                                        key={index}
+                                        job={job}
                                     />
                                 ))}
                             </ScrollView>)}
@@ -190,4 +211,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default SelectedJobsScreen;
+export default CreatedJobsScreen;

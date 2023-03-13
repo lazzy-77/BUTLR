@@ -1,5 +1,14 @@
-import React, {useState, useEffect} from "react";
-import {StyleSheet, View, Text, FlatList, TextInput, TouchableOpacity, Image} from "react-native";
+import React, {useState, useEffect, useRef} from "react";
+import {
+    StyleSheet,
+    View,
+    Text,
+    FlatList,
+    TextInput,
+    TouchableOpacity,
+    Image,
+    KeyboardAvoidingView,
+} from "react-native";
 import {
     auth,
     functions,
@@ -17,6 +26,7 @@ import colors from "../configs/colors";
 import Constants from "expo-constants";
 import tailwind from "twrnc";
 import {useNavigation} from "@react-navigation/core";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 const MessageScreen = ({route}) => {
     const user = auth.currentUser;
@@ -25,6 +35,7 @@ const MessageScreen = ({route}) => {
     const [profilePic, setProfilePic] = useState(null);
     const [userName, setUserName] = useState("Name");
     const {conversationId, otherUserUid} = route.params;
+    const flatListRef = useRef(null);
 
     const getUserByUid = httpsCallable(functions, "getUserByUid");
     const navigation = useNavigation();
@@ -54,7 +65,9 @@ const MessageScreen = ({route}) => {
     }
 
     useEffect(() => {
-        displayUser().catch((error) => {
+        displayUser().then(r => {
+            //profilePic is set
+        }).catch((error) => {
             console.error(error);
         });
     }, []);
@@ -108,16 +121,23 @@ const MessageScreen = ({route}) => {
                 <Text style={tailwind`text-xl font-bold`}>{userName.split(" ")[0]}</Text>
             </View>
             <FlatList
+                ref={flatListRef}
                 data={messages}
                 keyExtractor={(item) => item.id}
                 renderItem={({item}) => (
                     <View style={item.senderId === user?.uid ? styles.senderMessage : styles.receiverMessage}>
                         <Text
-                            style={item.senderId === user?.uid ? tailwind`text-white` : tailwind`text-black`}>{item.message}</Text>
+                            style={item.senderId === user?.uid ? tailwind`text-white` : tailwind`text-black`}>
+                            {item.message}
+                        </Text>
                     </View>
-                )}
-            />
-            <View style={styles.inputContainer}>
+                )}/>
+
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                onLayout={() => flatListRef.current.scrollToEnd({animated: true})}
+                style={styles.inputContainer}
+            >
                 <TextInput
                     style={styles.input}
                     placeholder="Type a message..."
@@ -127,7 +147,7 @@ const MessageScreen = ({route}) => {
                 <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
                     <MaterialCommunityIcons name={"send"} size={24} color={colors.slate}/>
                 </TouchableOpacity>
-            </View>
+            </KeyboardAvoidingView>
         </View>
     );
 };
@@ -162,7 +182,7 @@ const styles = StyleSheet.create({
         padding: 20,
         width: "100%",
         position: "absolute",
-        bottom: 0,
+        bottom: 5,
     },
     input: {
         flex: 1,

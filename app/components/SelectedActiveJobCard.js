@@ -3,18 +3,16 @@ import tailwind from "twrnc";
 import React, {useEffect, useState} from "react";
 import {functions, getDownloadURL, httpsCallable, ref, storage} from "../configs/firebase";
 import {getDistance} from "geolib";
-import {Foundation, MaterialCommunityIcons} from "@expo/vector-icons";
+import {FontAwesome, Foundation, MaterialCommunityIcons} from "@expo/vector-icons";
 import colors from "../configs/colors";
 import {useNavigation} from "@react-navigation/core";
 
-const PendingJobCard = (props) => {
-    const {categoryDisplayName, createdBy, createdAt, duration, id, location, pay, title} = props?.job;
+const SelectedActiveJobCard = (props) => {
+    const {categoryDisplayName, createdBy, jobStatus, duration, id, location, pay, title} = props?.job;
     const [user, setUser] = useState(null);
     const {latitude, longitude} = props?.location;
     const [userName, setUserName] = useState("Name");
     const [profilePic, setProfilePic] = useState(null);
-    const datetime = new Date(createdAt._seconds * 1000 + createdAt._nanoseconds / 1000000)
-        .toLocaleDateString("en-UK", {day: 'numeric', month: 'long', year: 'numeric'});
 
     const getUserByUid = httpsCallable(functions, 'getUserByUid');
     const jobLocation = {latitude: location[0], longitude: location[1]};
@@ -38,6 +36,15 @@ const PendingJobCard = (props) => {
             return `${distance}m`
         } else {
             return `${(distance / 1000).toFixed(0)}km`
+        }
+    }
+
+    const getStatusColor = () => {
+        switch (jobStatus) {
+            case "Active":
+                return "#06c167";
+            case "Pending Confirmation":
+                return "#7e22ce";
         }
     }
 
@@ -68,10 +75,10 @@ const PendingJobCard = (props) => {
                     <View style={tailwind`flex flex-row justify-center`}>
                         <View style={tailwind`w-1/2 justify-center rounded-md`}>
                             <View style={tailwind`flex flex-row items-center`}>
-                                <MaterialCommunityIcons name="calendar" size={12} color="black"/>
-                                <Text style={tailwind`text-xs ml-1`}>Created</Text>
+                                <FontAwesome name="circle" size={12} color={getStatusColor()}/>
+                                <Text style={tailwind`text-xs ml-1`}>Status</Text>
                             </View>
-                            <Text style={tailwind`text-xs text-gray-700`}>{datetime}</Text>
+                            <Text style={tailwind`text-xs text-gray-700`}>{jobStatus}</Text>
                         </View>
                         <View style={tailwind`w-1/2 justify-center rounded-md`}>
                             <View style={tailwind`flex flex-row items-center`}>
@@ -111,4 +118,4 @@ const PendingJobCard = (props) => {
         </TouchableOpacity>);
 }
 
-export default PendingJobCard;
+export default SelectedActiveJobCard;
