@@ -53,11 +53,6 @@ const CreatedJobsScreen = () => {
         })
     }
 
-    const handlePressCompletedJobs = (item) => {
-        navigation.navigate("CompletedJobDetailsScreen", {
-            item: {...item},
-        })
-    }
 
     const refreshJobs = async () => {
         //Get pending jobs
@@ -155,10 +150,10 @@ const CreatedJobsScreen = () => {
                             </ScrollView>)}
                     </View>
                     <View style={tailwind`h-3/8 mx-2`}>
-                        <Text style={tailwind`text-lg font-bold underline`} onPress={() => console.log(completedJobs)}>
+                        <Text style={tailwind`text-lg font-bold underline`}>
                             Open Jobs
                         </Text>
-                        {completedJobsLoading ? (
+                        {openJobsLoading ? (
                             <View style={tailwind`h-full w-full justify-center items-center`}>
                                 <ActivityIndicator size="large" color={colors.primary}/>
                             </View>
@@ -187,7 +182,6 @@ const CreatedJobsScreen = () => {
                                     <CompletedJobCard
                                         key={index}
                                         job={job}
-                                        onPress={() => handlePressCompletedJobs(job)}
                                     />
                                 ))}
                             </ScrollView>)}

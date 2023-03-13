@@ -10,7 +10,6 @@ import PendingJobDetailsScreen from "../screens/PendingJobDetailsScreen";
 import ConversationsScreen from "../screens/ConversationsScreen";
 import MessageScreen from "../screens/MessageScreen";
 import CreatedJobsScreen from "../screens/CreatedJobsScreen";
-import CompletedJobDetailsScreen from "../screens/CompletedJobDetailsScreen";
 import OpenJobDetailsScreen from "../screens/OpenJobDetailsScreen";
 import SelectedActiveJobDetailsScreen from "../screens/SelectedActiveJobDetailsScreen";
 import CreatedActiveJobDetailsScreen from "../screens/CreatedActiveJobDetailsScreen";
@@ -33,7 +32,6 @@ export default function HomeNavigator() {
             <Stack.Screen name="PendingJobDetailsScreen" component={PendingJobDetailsScreen} />
             <Stack.Screen name="ConversationsScreen" component={ConversationsScreen} />
             <Stack.Screen name="CreatedJobsScreen" component={CreatedJobsScreen} />
-            <Stack.Screen name="CompletedJobDetailsScreen" component={CompletedJobDetailsScreen} />
             <Stack.Screen name="OpenJobDetailsScreen" component={OpenJobDetailsScreen} />
             <Stack.Screen name="MessageScreen" component={MessageScreen} />
             <Stack.Screen name="SelectedActiveJobDetailsScreen" component={SelectedActiveJobDetailsScreen} />

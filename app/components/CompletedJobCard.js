@@ -8,15 +8,17 @@ import colors from "../configs/colors";
 import {useNavigation} from "@react-navigation/core";
 
 const CompletedJobCard = (props) => {
-    const {createdAt, title, completedAt, completedBy} = props?.job;
+    const {createdAt, title, jobCompletedAt, jobCompletedBy} = props?.job;
     const [userName, setUserName] = useState("Name");
-    const datetime = new Date(createdAt._seconds * 1000 + createdAt._nanoseconds / 1000000)
+    const createdDatetime = new Date(createdAt._seconds * 1000 + createdAt._nanoseconds / 1000000)
+        .toLocaleDateString("en-UK", {day: 'numeric', month: 'long', year: 'numeric'});
+    const completedDatetime = new Date(jobCompletedAt._seconds * 1000 + jobCompletedAt._nanoseconds / 1000000)
         .toLocaleDateString("en-UK", {day: 'numeric', month: 'long', year: 'numeric'});
 
     const getUserByUid = httpsCallable(functions, 'getUserByUid');
 
     useEffect(() => {
-        getUserByUid({uid: completedBy}).then(r => {
+        getUserByUid({uid: jobCompletedBy}).then(r => {
             setUserName(r.data.displayName);
         }).catch(e => {
             console.log(e);
@@ -24,7 +26,7 @@ const CompletedJobCard = (props) => {
     }, [])
 
     return (
-        <TouchableOpacity onPress={() => props.onPress} style={tailwind`max-h-32 flex flex-row border-b border-gray-200 py-2`}>
+        <View onPress={() => props.onPress} style={tailwind`max-h-32 flex flex-row border-b border-gray-200 py-2`}>
             <View style={tailwind`w-full pr-2`}>
                 <View style={tailwind`justify-start`}>
                     <Text style={tailwind`font-bold text-base`}>{title}</Text>
@@ -36,14 +38,14 @@ const CompletedJobCard = (props) => {
                                 <MaterialCommunityIcons name="calendar" size={12} color="black"/>
                                 <Text style={tailwind`text-xs ml-1`}>Created</Text>
                             </View>
-                            <Text style={tailwind`text-xs text-gray-700`}>{datetime}</Text>
+                            <Text style={tailwind`text-xs text-gray-700`}>{createdDatetime}</Text>
                         </View>
                         <View style={tailwind`w-1/3 justify-center rounded-md`}>
                             <View style={tailwind`flex flex-row items-center`}>
                                 <FontAwesome name="calendar-check-o" size={12} color="black" />
                                 <Text style={tailwind`text-xs ml-1`}>Completed</Text>
                             </View>
-                            <Text style={tailwind`text-xs text-gray-700`}>{completedAt}</Text>
+                            <Text style={tailwind`text-xs text-gray-700`}>{completedDatetime}</Text>
                         </View>
                         <View style={tailwind`w-1/3 justify-center rounded-md`}>
                             <View style={tailwind`flex flex-row items-center`}>
@@ -55,7 +57,7 @@ const CompletedJobCard = (props) => {
                     </View>
                 </View>
             </View>
-        </TouchableOpacity>
+        </View>
     );
 }
 
