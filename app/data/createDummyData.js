@@ -20,7 +20,7 @@ const CreateDummyData = () => {
             const media = [];
             for (let j = 0; j < 3; j++) {
                 const mediaObject = {
-                    uri: faker.image.cats(1234, 1234, true),
+                    uri: faker.image.animals(),
                     type: 'image',
                 }
                 media.push(mediaObject);

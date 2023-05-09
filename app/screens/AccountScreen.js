@@ -90,7 +90,7 @@ const AccountScreen = () => {
                 <TouchableOpacity onPress={() => signOut(auth)}>
                     <Text style={tailwind`text-green-900 mt-2`}>Sign out</Text>
                 </TouchableOpacity>
-                {/*<CreateDummyData/>*/}
+                <CreateDummyData/>
             </View>
         </Screen>
     );
